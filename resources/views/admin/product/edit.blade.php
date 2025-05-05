@@ -49,6 +49,22 @@
           &nbsp;
         </div>
       </div>
+      <div class="col">
+        <div class="mb-3 row">
+          <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Category Name</label>
+          <select name="category_id" class="col-lg-10 col-md-6 col-sm-12">
+            <option value="" disabled {{ old('category_id', $viewData["product"]->category_id) ? '' : 'selected' }}>
+                Select Category
+            </option>
+            @foreach ($viewData["categories"] as $category)
+                <option value="{{ $category->id }}"
+                    {{ old('category_id', $viewData["product"]->category_id) == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+        </div>
+      </div>
       <div class="mb-3">
         <label class="form-label">Description</label>
         <textarea class="form-control" name="description"

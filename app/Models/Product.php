@@ -84,10 +84,21 @@ class Product extends Model
         return $this->attributes['price'];
     }
 
+
     public function setPrice($price)
     {
         $this->attributes['price'] = $price;
     }
+    public function setCategoryId($category_id)
+    {
+        return $this->attributes['category_id']=$category_id;
+    }
+    public function getCategoryId()
+    {
+        return $this->attributes['category_id'];
+    }
+   
+
 
     public function getCreatedAt()
     {

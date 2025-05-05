@@ -25,6 +25,7 @@
             </div>
           </div>
         </div>
+       
         <div class="col">
           <div class="mb-3 row">
             <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Price:</label>
@@ -47,6 +48,17 @@
           &nbsp;
         </div>
       </div>
+      <div class="col">
+        <div class="mb-3 row">
+          <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Category Name</label>
+          <select name="category_id" id="" class="col-lg-10 col-md-6 col-sm-12" >
+            <option value="" disabled selected>Select Category</option>
+            @foreach ($viewData["categories"] as $category)
+            <option  value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
       <div class="mb-3">
         <label class="form-label">Description</label>
         <textarea class="form-control" name="description" rows="3">{{ old('description') }}</textarea>
@@ -65,6 +77,7 @@
       <thead>
         <tr>
           <th scope="col">ID</th>
+          <th scope="col">Category Name</th>
           <th scope="col">Name</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
@@ -74,9 +87,10 @@
         @foreach ($viewData["products"] as $product)
         <tr>
           <td>{{ $product->getId() }}</td>
+          <td>{{ $product->category->name }}</td>
           <td>{{ $product->getName() }}</td>
           <td>
-            <a class="btn btn-primary" href="{{route('admin.product.edit', ['id'=> $product->getId()])}}">
+            <a class="btn btn-primary" href="{{route('admin.product.edit', ['id'=> $product->getId(),'category_id'=> $product->category->id] )}}">
               <i class="bi-pencil"></i>
             </a>
           </td>

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
-use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class AdminProductController extends Controller
@@ -14,6 +15,8 @@ class AdminProductController extends Controller
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
         $viewData["products"] = Product::all();
+        $viewData["categories"] = Category::all(); 
+
         return view('admin.product.index')->with("viewData", $viewData);
     }
 
@@ -22,6 +25,8 @@ class AdminProductController extends Controller
         Product::validate($request);
 
         $newProduct = new Product();
+      
+        $newProduct->setCategoryId($request->input('category_id'));
         $newProduct->setName($request->input('name'));
         $newProduct->setDescription($request->input('description'));
         $newProduct->setPrice($request->input('price'));
@@ -49,17 +54,20 @@ class AdminProductController extends Controller
 
     public function edit($id)
     {
-        $viewData = [];
-        $viewData["title"] = "Admin Page - Edit Product - Online Store";
-        $viewData["product"] = Product::findOrFail($id);
-        return view('admin.product.edit')->with("viewData", $viewData);
+    $viewData = [];
+    $viewData["title"] = "Admin Page - Edit Product - Online Store";
+    $viewData["product"] = Product::findOrFail($id);
+    $viewData["categories"] = Category::all(); 
+    return view('admin.product.edit')->with("viewData", $viewData);
     }
+
 
     public function update(Request $request, $id)
     {
         Product::validate($request);
 
         $product = Product::findOrFail($id);
+        $product->setCategoryId($request->input('category_id'));
         $product->setName($request->input('name'));
         $product->setDescription($request->input('description'));
         $product->setPrice($request->input('price'));
