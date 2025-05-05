@@ -39,6 +39,7 @@ Route::middleware('admin')->group(function () {
     Route::delete('/admin/categories/{id}/destroy', 'App\Http\Controllers\Admin\AdminCategoryController@destroy')->name("admin.category.destroy");
     Route::get('/admin/categories/{id}/edit', 'App\Http\Controllers\Admin\AdminCategoryController@edit')->name("admin.category.edit");
     Route::put('/admin/categories/{id}/update', 'App\Http\Controllers\Admin\AdminCategoryController@update')->name("admin.category.update");
+    Route::get('/admin/filtered-products', 'App\Http\Controllers\Admin\AdminProductController@filterparcategory')->name("admin.product.filterparcategory");
 });
 
 Auth::routes();

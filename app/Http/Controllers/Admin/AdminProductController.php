@@ -84,4 +84,24 @@ class AdminProductController extends Controller
         $product->save();
         return redirect()->route('admin.product.index');
     }
+    public function filterparcategory(Request $request)
+    {
+        $category_id = $request->input('category_id');
+        $viewData = [];
+        $viewData["title"] = "Admin Page - Products - Online Store";
+        if(
+            $category_id == "" 
+        ){
+            $viewData["products"] = Product::all();
+ 
+        }else{
+            $viewData["products"] = Product::where('category_id', $category_id)->get();
+        }
+
+        $viewData["categories"] = Category::all(); 
+
+        return view('admin.product.index')->with("viewData", $viewData);
+    }
+    
 }
+

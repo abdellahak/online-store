@@ -51,7 +51,7 @@
       <div class="col">
         <div class="mb-3 row">
           <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Category Name</label>
-          <select name="category_id" id="" class="col-lg-10 col-md-6 col-sm-12" >
+          <select name="category_id" id="" class="form-control" >
             <option value="" disabled selected>Select Category</option>
             @foreach ($viewData["categories"] as $category)
             <option  value="{{ $category->id }}">{{ $category->name }}</option>
@@ -73,6 +73,19 @@
     Manage Products
   </div>
   <div class="card-body">
+    <form method="GET" action="{{ route('admin.product.filterparcategory') }}">
+      <div class="mb-3">
+        <label class="form-label">Filter by Category:</label>
+        <select name="category_id" class="form-control" onchange="this.form.submit()">
+          <option value="">All Categories</option>
+          @foreach ($viewData["categories"] as $category)
+          <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+            {{ $category->name }}
+          </option>
+          @endforeach
+        </select>
+      </div>
+    </form>
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
