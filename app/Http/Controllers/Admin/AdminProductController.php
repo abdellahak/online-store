@@ -104,6 +104,27 @@ class AdminProductController extends Controller
         }
 
         $viewData["categories"] = Category::all(); 
+        $viewData["suppliers"] = Supplier::all();
+
+
+        return view('admin.product.index')->with("viewData", $viewData);
+    }
+    public function filterparsupplier(Request $request)
+    {
+        $supplier_id = $request->input('supplier_id');
+        $viewData = [];
+        $viewData["title"] = "Admin Page - Products - Online Store";
+        if(
+            $supplier_id == "" 
+        ){
+            $viewData["products"] = Product::all();
+ 
+        }else{
+            $viewData["products"] = Product::where('supplier_id', $supplier_id)->get();
+        }
+
+        $viewData["categories"] = Category::all();
+        $viewData["suppliers"] = Supplier::all();
 
         return view('admin.product.index')->with("viewData", $viewData);
     }
