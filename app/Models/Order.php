@@ -24,8 +24,10 @@ class Order extends Model
         $request->validate([
             "total" => "required|numeric",
             "user_id" => "required|exists:users,id",
+            "status"=> "required|in:Emballé,Envoyé,En route,Recu,Retournée,fermée",
         ]);
     }
+
     
     public function getId()
     {
@@ -36,6 +38,7 @@ class Order extends Model
     {
         $this->attributes['id'] = $id;
     }
+   
 
     public function getTotal()
     {
@@ -105,5 +108,13 @@ class Order extends Model
     public function setItems($items)
     {
         $this->items = $items;
+    }
+    public function setStatus($status)
+    {
+        $this->attributes['status'] = $status;
+    }
+    public function getStatus()
+    {
+        return $this->attributes['status'];
     }
 }
