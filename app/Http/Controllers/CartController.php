@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Order;
 use App\Models\Item;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class CartController extends Controller
 {
@@ -15,10 +16,10 @@ class CartController extends Controller
         $total = 0;
         $productsInCart = [];
 
-        $productsInSession = $request->session()->get("products");
-        if ($productsInSession) {
-            $productsInCart = Product::findMany(array_keys($productsInSession));
-            $total = Product::sumPricesByQuantities($productsInCart, $productsInSession);
+        $productsInCookie = json_decode(Cookie::get('cart'), true);
+        if ($productsInCookie) {
+            $productsInCart = Product::findMany(array_keys($productsInCookie));
+            $total = Product::sumPricesByQuantities($productsInCart, $productsInCookie);
         }
 
         $viewData = [];
@@ -31,17 +32,20 @@ class CartController extends Controller
 
     public function add(Request $request, $id)
     {
-        $products = $request->session()->get("products");
-        $products[$id] = $request->input('quantity');
-        $request->session()->put('products', $products);
-
-        return redirect()->route('cart.index');
+        $products = json_decode(Cookie::get('cart', '{}'), true);
+        $quantity = (int) $request->input('quantity', 1);
+        if (isset($products[$id])) {
+            $products[$id] += $quantity;
+        } else {
+            $products[$id] = $quantity;
+        }
+        return redirect()->route('cart.index')->cookie('cart', json_encode($products), 60 * 24 * 7);
     }
+    
 
     public function delete(Request $request)
     {
-        $request->session()->forget('products');
-        return back();
+        return back()->withCookie(Cookie::forget('cart'));
     }
 
     public function purchase(Request $request)
