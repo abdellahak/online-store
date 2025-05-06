@@ -87,4 +87,6 @@ class AdminCategoryController extends Controller
 
         return redirect()->route('admin.category.index')->with('success', 'Category deleted successfully.');
     }
+
+}
     
