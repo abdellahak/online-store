@@ -40,6 +40,11 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/categories/{id}/edit', 'App\Http\Controllers\Admin\AdminCategoryController@edit')->name("admin.category.edit");
     Route::put('/admin/categories/{id}/update', 'App\Http\Controllers\Admin\AdminCategoryController@update')->name("admin.category.update");
     Route::get('/admin/filtered-products', 'App\Http\Controllers\Admin\AdminProductController@filterparcategory')->name("admin.product.filterparcategory");
+    Route::get('/admin/supplier','App\Http\Controllers\Admin\AdminSupplierController@index')->name("admin.supplier.index");
+    Route::post('/admin/supplier/store','App\Http\Controllers\Admin\AdminSupplierController@store')->name("admin.supplier.store");
+    Route::delete('/admin/supplier/{id}/destroy','App\Http\Controllers\Admin\AdminSupplierController@destroy')->name("admin.supplier.destroy");
+    Route::get('/admin/supplier/{id}/edit','App\Http\Controllers\Admin\AdminSupplierController@edit')->name("admin.supplier.edit");
+    Route::put('/admin/supplier/{id}/update','App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
 });
 
 Auth::routes();
