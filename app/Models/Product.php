@@ -93,6 +93,10 @@ class Product extends Model
     {
         return $this->attributes['category_id']=$category_id;
     }
+    public function setSupplierId($supplier_id)
+    {
+        return $this->attributes['supplier_id']=$supplier_id;
+    }
     public function getCategoryId()
     {
         return $this->attributes['category_id'];

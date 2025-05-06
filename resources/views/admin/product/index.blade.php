@@ -59,6 +59,17 @@
           </select>
         </div>
       </div>
+      <div class="col">
+        <div class="mb-3 row">
+          <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Supplier Name</label>
+          <select name="supplier_id" id="" class="form-control" >
+            <option value="" disabled selected>Select Supplier</option>
+            @foreach ($viewData["suppliers"] as $supplier)
+            <option  value="{{ $supplier->id }}">{{ $supplier->raison_sociale }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
       <div class="mb-3">
         <label class="form-label">Description</label>
         <textarea class="form-control" name="description" rows="3">{{ old('description') }}</textarea>
@@ -91,6 +102,7 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Category Name</th>
+          <th scope="col">Supplier Name</th>
           <th scope="col">Name</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
@@ -101,6 +113,7 @@
         <tr>
           <td>{{ $product->getId() }}</td>
           <td>{{ $product->category->name }}</td>
+          <td>{{ $product->supplier->raison_sociale }}</td>
           <td>{{ $product->getName() }}</td>
           <td>
             <a class="btn btn-primary" href="{{route('admin.product.edit', ['id'=> $product->getId(),'category_id'=> $product->category->id] )}}">
