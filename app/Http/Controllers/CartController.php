@@ -51,7 +51,7 @@ class CartController extends Controller
         }
         return redirect()->route('cart.index')->cookie('cart', json_encode($products), 60 * 24 * 7);
     }
-    
+
 
     public function delete(Request $request)
     {
@@ -62,7 +62,8 @@ class CartController extends Controller
     {
         $productsInCookie = json_decode(Cookie::get('cart'), true);
         if ($productsInCookie) {
-            $userId = Auth::user()->getId();
+            $user = Auth::user(); // Get the authenticated user
+            $userId = $user->id; // Access id directly
             $order = new Order();
             $order->setUserId($userId);
             $order->setTotal(0);
@@ -79,13 +80,17 @@ class CartController extends Controller
                 $item->setOrderId($order->getId());
                 $item->save();
                 $total += $product->getPrice() * $quantity;
+
+                // Update product quantity in store
+                $product->setQuantityStore($product->getQuantityStore() - $quantity);
+                $product->save();
             }
             $order->setTotal($total);
             $order->save();
 
-            $newBalance = Auth::user()->getBalance() - $total;
-            Auth::user()->setBalance($newBalance);
-            Auth::user()->save();
+            $newBalance = $user->balance - $total; // Access balance directly
+            $user->balance = $newBalance; // Set balance directly
+            $user->save(); // Eloquent save method
 
             // Clear the cart cookie after purchase
             Cookie::queue(Cookie::forget('cart'));
