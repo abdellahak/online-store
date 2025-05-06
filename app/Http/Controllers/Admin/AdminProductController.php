@@ -27,17 +27,18 @@ class AdminProductController extends Controller
         Product::validate($request);
 
         $newProduct = new Product();
-      
+
         $newProduct->setCategoryId($request->input('category_id'));
         $newProduct->setSupplierId($request->input('supplier_id'));
         $newProduct->setName($request->input('name'));
         $newProduct->setDescription($request->input('description'));
         $newProduct->setPrice($request->input('price'));
+        $newProduct->setQuantityStore($request->input('quantity_store'));
         $newProduct->setImage("game.png");
         $newProduct->save();
 
         if ($request->hasFile('image')) {
-            $imageName = $newProduct->getId().".".$request->file('image')->extension();
+            $imageName = $newProduct->getId() . "." . $request->file('image')->extension();
             Storage::disk('public')->put(
                 $imageName,
                 file_get_contents($request->file('image')->getRealPath())
@@ -76,9 +77,10 @@ class AdminProductController extends Controller
         $product->setName($request->input('name'));
         $product->setDescription($request->input('description'));
         $product->setPrice($request->input('price'));
+        $product->setQuantityStore($request->input('quantity_store'));
 
         if ($request->hasFile('image')) {
-            $imageName = $product->getId().".".$request->file('image')->extension();
+            $imageName = $product->getId() . "." . $request->file('image')->extension();
             Storage::disk('public')->put(
                 $imageName,
                 file_get_contents($request->file('image')->getRealPath())
@@ -94,12 +96,11 @@ class AdminProductController extends Controller
         $category_id = $request->input('category_id');
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
-        if(
-            $category_id == "" 
-        ){
+        if (
+            $category_id == ""
+        ) {
             $viewData["products"] = Product::all();
- 
-        }else{
+        } else {
             $viewData["products"] = Product::where('category_id', $category_id)->get();
         }
 
@@ -128,6 +129,4 @@ class AdminProductController extends Controller
 
         return view('admin.product.index')->with("viewData", $viewData);
     }
-    
 }
-

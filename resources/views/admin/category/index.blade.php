@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mb-4">
   <div class="card-header">
-    Create categorys
+    Create category
   </div>
   <div class="card-body">
     @if($errors->any())

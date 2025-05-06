@@ -26,6 +26,8 @@ class Product extends Model
             "description" => "required",
             "price" => "required|numeric|gt:0",
             'image' => 'image',
+            'quantity_store' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
         ]);
     }
 
@@ -89,6 +91,17 @@ class Product extends Model
     {
         $this->attributes['price'] = $price;
     }
+
+    public function getQuantityStore()
+    {
+        return $this->attributes['quantity_store'];
+    }
+
+    public function setQuantityStore($quantity_store)
+    {
+        $this->attributes['quantity_store'] = $quantity_store;
+    }
+
     public function setCategoryId($category_id)
     {
         return $this->attributes['category_id']=$category_id;
@@ -101,7 +114,6 @@ class Product extends Model
     {
         return $this->attributes['category_id'];
     }
-   
 
 
     public function getCreatedAt()

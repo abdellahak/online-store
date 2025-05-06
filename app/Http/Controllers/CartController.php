@@ -32,8 +32,18 @@ class CartController extends Controller
 
     public function add(Request $request, $id)
     {
+        $product = Product::findOrFail($id);
+
         $products = json_decode(Cookie::get('cart', '{}'), true);
         $quantity = (int) $request->input('quantity', 1);
+
+        $currentQuantityInCart = $products[$id] ?? 0;
+        $requestedTotalQuantity = $currentQuantityInCart + $quantity;
+
+        if ($product->getQuantityStore() < $requestedTotalQuantity) {
+            return back()->with('error', 'Not enough stock available for ' . $product->getName() . '. Available: ' . $product->getQuantityStore() . ', In Cart: ' . $currentQuantityInCart . ', Requested: ' . $quantity);
+        }
+
         if (isset($products[$id])) {
             $products[$id] += $quantity;
         } else {
@@ -41,7 +51,7 @@ class CartController extends Controller
         }
         return redirect()->route('cart.index')->cookie('cart', json_encode($products), 60 * 24 * 7);
     }
-    
+
 
     public function delete(Request $request)
     {
@@ -50,34 +60,40 @@ class CartController extends Controller
 
     public function purchase(Request $request)
     {
-        $productsInSession = $request->session()->get("products");
-        if ($productsInSession) {
-            $userId = Auth::user()->getId();
+        $productsInCookie = json_decode(Cookie::get('cart'), true);
+        if ($productsInCookie) {
+            $user = Auth::user(); // Get the authenticated user
+            $userId = $user->id; // Access id directly
             $order = new Order();
             $order->setUserId($userId);
             $order->setTotal(0);
             $order->save();
 
             $total = 0;
-            $productsInCart = Product::findMany(array_keys($productsInSession));
+            $productsInCart = Product::findMany(array_keys($productsInCookie));
             foreach ($productsInCart as $product) {
-                $quantity = $productsInSession[$product->getId()];
+                $quantity = $productsInCookie[$product->getId()];
                 $item = new Item();
                 $item->setQuantity($quantity);
                 $item->setPrice($product->getPrice());
                 $item->setProductId($product->getId());
                 $item->setOrderId($order->getId());
                 $item->save();
-                $total = $total + ($product->getPrice()*$quantity);
+                $total += $product->getPrice() * $quantity;
+
+                // Update product quantity in store
+                $product->setQuantityStore($product->getQuantityStore() - $quantity);
+                $product->save();
             }
             $order->setTotal($total);
             $order->save();
 
-            $newBalance = Auth::user()->getBalance() - $total;
-            Auth::user()->setBalance($newBalance);
-            Auth::user()->save();
+            $newBalance = $user->balance - $total; // Access balance directly
+            $user->balance = $newBalance; // Set balance directly
+            $user->save(); // Eloquent save method
 
-            $request->session()->forget('products');
+            // Clear the cart cookie after purchase
+            Cookie::queue(Cookie::forget('cart'));
 
             $viewData = [];
             $viewData["title"] = "Purchase - Online Store";
