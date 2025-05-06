@@ -13,6 +13,8 @@
           {{ $viewData["product"]->getName() }} (${{ $viewData["product"]->getPrice() }})
         </h5>
         <p class="card-text">{{ $viewData["product"]->getDescription() }}</p>
+        <p class="card-text">Quantity in Stock: {{ $viewData["product"]->getQuantityStore() }}</p>
+        <p class="card-text">
         <p class="card-text">
         <form method="POST" action="{{ route('cart.add', ['id'=> $viewData['product']->getId()]) }}">
           <div class="row">

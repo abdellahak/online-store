@@ -15,7 +15,7 @@ class AdminProductController extends Controller
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
         $viewData["products"] = Product::all();
-        $viewData["categories"] = Category::all(); 
+        $viewData["categories"] = Category::all();
 
         return view('admin.product.index')->with("viewData", $viewData);
     }
@@ -25,16 +25,17 @@ class AdminProductController extends Controller
         Product::validate($request);
 
         $newProduct = new Product();
-      
+
         $newProduct->setCategoryId($request->input('category_id'));
         $newProduct->setName($request->input('name'));
         $newProduct->setDescription($request->input('description'));
         $newProduct->setPrice($request->input('price'));
+        $newProduct->setQuantityStore($request->input('quantity_store'));
         $newProduct->setImage("game.png");
         $newProduct->save();
 
         if ($request->hasFile('image')) {
-            $imageName = $newProduct->getId().".".$request->file('image')->extension();
+            $imageName = $newProduct->getId() . "." . $request->file('image')->extension();
             Storage::disk('public')->put(
                 $imageName,
                 file_get_contents($request->file('image')->getRealPath())
@@ -54,11 +55,11 @@ class AdminProductController extends Controller
 
     public function edit($id)
     {
-    $viewData = [];
-    $viewData["title"] = "Admin Page - Edit Product - Online Store";
-    $viewData["product"] = Product::findOrFail($id);
-    $viewData["categories"] = Category::all(); 
-    return view('admin.product.edit')->with("viewData", $viewData);
+        $viewData = [];
+        $viewData["title"] = "Admin Page - Edit Product - Online Store";
+        $viewData["product"] = Product::findOrFail($id);
+        $viewData["categories"] = Category::all();
+        return view('admin.product.edit')->with("viewData", $viewData);
     }
 
 
@@ -71,9 +72,10 @@ class AdminProductController extends Controller
         $product->setName($request->input('name'));
         $product->setDescription($request->input('description'));
         $product->setPrice($request->input('price'));
+        $product->setQuantityStore($request->input('quantity_store'));
 
         if ($request->hasFile('image')) {
-            $imageName = $product->getId().".".$request->file('image')->extension();
+            $imageName = $product->getId() . "." . $request->file('image')->extension();
             Storage::disk('public')->put(
                 $imageName,
                 file_get_contents($request->file('image')->getRealPath())
@@ -89,19 +91,16 @@ class AdminProductController extends Controller
         $category_id = $request->input('category_id');
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
-        if(
-            $category_id == "" 
-        ){
+        if (
+            $category_id == ""
+        ) {
             $viewData["products"] = Product::all();
- 
-        }else{
+        } else {
             $viewData["products"] = Product::where('category_id', $category_id)->get();
         }
 
-        $viewData["categories"] = Category::all(); 
+        $viewData["categories"] = Category::all();
 
         return view('admin.product.index')->with("viewData", $viewData);
     }
-    
 }
-

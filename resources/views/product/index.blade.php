@@ -10,6 +10,13 @@
       <div class="card-body text-center">
         <a href="{{ route('product.show', ['id'=> $product->getId()]) }}"
           class="btn bg-primary text-white">{{ $product->getName() }}</a>
+        <div class="mt-2">
+          @if($product->getQuantityStore() > 0)
+            <span class="badge bg-success">{{ $product->getQuantityStore() }} still in stock</span>
+          @else
+            <span class="badge bg-danger">Out of stock</span>
+          @endif
+        </div>
       </div>
     </div>
   </div>
