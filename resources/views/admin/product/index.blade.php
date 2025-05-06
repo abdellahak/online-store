@@ -110,7 +110,18 @@
         </thead>
         <tbody>
           @foreach ($viewData['products'] as $product)
-            <tr>
+            @php
+              $quantity = $product->getQuantityStore();
+              $bgColor = '';
+              if ($quantity == 0) {
+                  $bgColor = 'bg-danger text-white';
+              } elseif ($quantity < 10) {
+                  $bgColor = 'bg-warning';    
+              } else {
+                  $bgColor = 'bg-success text-white';
+              }
+            @endphp
+            <tr class="{{ $bgColor }}">
               <td>{{ $product->getId() }}</td>
               <td>{{ $product->category->name }}</td>
               <td>{{ $product->getName() }}</td>
