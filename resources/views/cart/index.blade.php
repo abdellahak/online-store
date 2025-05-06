@@ -22,7 +22,7 @@
           <td>{{ $product->getId() }}</td>
           <td>{{ $product->getName() }}</td>
           <td>${{ $product->getPrice() }}</td>
-          <td>{{ session('products')[$product->getId()] }}</td>
+          <td>{{ json_decode(Cookie::get('cart'), true)[$product->getId()]}}</td>
         </tr>
         @endforeach
       </tbody>
