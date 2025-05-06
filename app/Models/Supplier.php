@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Supplier extends Model
 {
     protected $fillable = ['raison_sociale','adresse','tele','email','description'];
+    
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
