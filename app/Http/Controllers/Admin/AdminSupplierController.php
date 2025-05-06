@@ -71,8 +71,8 @@ class AdminSupplierController extends Controller
         $request->validate([
             'raison_sociale' => 'required|string|max:255',
             'adresse' => 'required|string|max:255',
-            'tele' => 'required|string|max:15',
-            'email' => 'required|email|unique:suppliers,email',
+            'tele' => "required|string|regex:/^\+?[0-9]{10,15}$/|unique:suppliers,tele,".$id,
+            'email' => "required|email|unique:suppliers,email,".$id,
             'description' => 'nullable|string|max:1000',
         ]);
 

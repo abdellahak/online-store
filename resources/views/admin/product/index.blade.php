@@ -97,6 +97,19 @@
         </select>
       </div>
     </form>
+    <form method="GET" action="{{ route('admin.product.filterparsupplier') }}">
+      <div class="mb-3">
+        <label class="form-label">Filter by Supplier:</label>
+        <select name="supplier_id" class="form-control" onchange="this.form.submit()">
+          <option value="">All Supplier</option>
+          @foreach ($viewData["suppliers"] as $supplier)
+          <option value="{{ $supplier->id }}" {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>
+            {{ $supplier->raison_sociale }}
+          </option>
+          @endforeach
+        </select>
+      </div>
+    </form>
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
