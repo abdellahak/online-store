@@ -26,4 +26,10 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+
+    public function soldes()
+    {
+        return $this->hasOne(Solde::class);
+    }
 }

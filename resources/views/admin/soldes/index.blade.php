@@ -50,6 +50,7 @@
               <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Product Name</label>
               <select name="product_id" id="" class="form-control">
                 <option value="" disabled selected>Select Product</option>
+                
                 @foreach ($viewData['products'] as $product)
                   <option value="{{ $product->id }}">{{ $product->name }}</option>
                 @endforeach
@@ -122,18 +123,18 @@
           <td>{{ $solde->starts_at }}</td>
           <td>{{ $solde->ends_at }}</td>
           <td>
-            {{-- <a class="btn btn-primary" href="{{ route('admin.solde.edit', ['id' => $solde->id]) }}">
+            <a class="btn btn-primary" href="{{ route('admin.soldes.edit', ['id' => $solde->id]) }}">
               <i class="bi-pencil"></i>
-            </a> --}}
+            </a>
           </td>
           <td>
-            {{-- <form action="{{ route('admin.solde.destroy', $solde->id) }}" method="POST">
+            <form action="{{ route('admin.soldes.destroy', $solde->id) }}" method="POST">
               @csrf
               @method('DELETE')
               <button class="btn btn-danger">
                 <i class="bi-trash"></i>
               </button>
-            </form> --}}
+            </form>
           </td>
         </tr>
         @endforeach

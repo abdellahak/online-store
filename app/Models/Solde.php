@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Solde extends Model
 {
     protected $fillable = [
-       
+     
         'value',
         'product_id',
         'category_id',
@@ -26,6 +26,13 @@ class Solde extends Model
     {
         return $this->belongsTo(category::class, 'category_id');
     }
+
+
+
+
+
+
+  
 
    
 }

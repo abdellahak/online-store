@@ -159,4 +159,10 @@ class Product extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
+
+
+    public function soldes()
+    {
+        return $this->hasOne(Solde::class);
+    }
 }
