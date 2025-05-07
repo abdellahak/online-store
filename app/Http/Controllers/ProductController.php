@@ -8,12 +8,19 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $viewData = [];
         $viewData["title"] = "Products - Online Store";
         $viewData["subtitle"] =  "List of products";
         $viewData["products"] = Product::all();
+
+        if ($request->has('show_sales')){
+            $viewData["products"] =
+            $viewData["products"]->filter(function ($product) {
+                return $product->hasSoldes();
+            });
+        }
         return view('product.index')->with("viewData", $viewData);
     }
 
