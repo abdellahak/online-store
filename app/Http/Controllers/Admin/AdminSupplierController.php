@@ -35,7 +35,7 @@ class AdminSupplierController extends Controller
         $request->validate([
             'raison_sociale' => 'required|string|max:255',
             'adresse' => 'required|string|max:255',
-            'tele' => 'required|string|max:15',
+            'tele' => 'required|string|max:15|unique:suppliers,tele',
             'email' => 'required|email|unique:suppliers,email',
             'description' => 'nullable|string|max:1000',
         ]);

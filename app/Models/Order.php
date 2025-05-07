@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Item;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
@@ -19,16 +20,17 @@ class Order extends Model
      * $this->items - Item[] - contains the associated items
      */
 
+    use HasFactory;
     public static function validate($request)
     {
         $request->validate([
             "total" => "required|numeric",
             "user_id" => "required|exists:users,id",
-            "status"=> "required|in:Emballé,Envoyé,En route,Recu,Retournée,fermée",
+            "status" => "required|in:Emballé,Envoyé,En route,Recu,Retournée,fermée",
         ]);
     }
 
-    
+
     public function getId()
     {
         return $this->attributes['id'];
@@ -38,7 +40,7 @@ class Order extends Model
     {
         $this->attributes['id'] = $id;
     }
-   
+
 
     public function getTotal()
     {

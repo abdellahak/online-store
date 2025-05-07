@@ -35,7 +35,7 @@ class AdminProductController extends Controller
         $newProduct->setDescription($request->input('description'));
         $newProduct->setPrice($request->input('price'));
         $newProduct->setQuantityStore($request->input('quantity_store'));
-        $newProduct->setImage("game.png");
+        $newProduct->setImage("default.jpg");
         $newProduct->save();
 
         if ($request->hasFile('image')) {

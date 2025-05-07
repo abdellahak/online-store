@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
+    use HasFactory;
     /**
      * ITEM ATTRIBUTES
      * $this->attributes['id'] - int - contains the item primary key (id)
@@ -21,6 +23,13 @@ class Item extends Model
      * $this->product - Product - contains the associated Product
      */
 
+    protected $fillable = [
+        'quantity',
+        'price',
+        'order_id',
+        'product_id'
+    ];
+
     public static function validate($request)
     {
         $request->validate([
@@ -30,7 +39,7 @@ class Item extends Model
             "order_id" => "required|exists:orders,id",
         ]);
     }
-    
+
     public function getId()
     {
         return $this->attributes['id'];
@@ -120,7 +129,7 @@ class Item extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    
+
     public function getProduct()
     {
         return $this->product;
