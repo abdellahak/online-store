@@ -8,6 +8,7 @@
 <div>
   <form method="GET" action="{{route("product.index")}}">
 <input type="checkbox" name="show_sales" id="show_sales" {{request("show_sales")? "checked":""}} 
+onchange="this.form.submit()">  
 <label for="show_sales">Show Soldes</label>
 
 </form>
