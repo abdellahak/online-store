@@ -128,6 +128,8 @@
           <th scope="col">Name</th>
           <th scope="col">Category Name</th>
           <th scope="col">Supplier Name</th>
+          <th scope="col">Price</th>
+          <th scope="col">Discounted Price</th>
           <th scope="col">Quantity</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
@@ -151,6 +153,8 @@
           <td>{{ $product->getName() }}</td>
           <td>{{ $product->category->name }}</td>
           <td>{{ $product->supplier?->raison_sociale }}</td>
+          <td>${{ $product->getPrice() }}</td>
+          <td>${{ $product->getDiscountedPrice() }}</td>
           <td>{{ $product->getQuantityStore() }}</td>
           <td>
             <a class="btn btn-primary" href="{{route('admin.product.edit', ['id'=> $product->getId(),'category_id'=> $product->category->id] )}}">

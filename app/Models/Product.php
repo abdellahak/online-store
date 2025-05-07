@@ -35,7 +35,7 @@ class Product extends Model
     {
         $total = 0;
         foreach ($products as $product) {
-            $total = $total + ($product->getPrice()*$productsInSession[$product->getId()]);
+            $total = $total + ($product->getDiscountedPrice()*$productsInSession[$product->getId()]);
         }
 
         return $total;
@@ -165,4 +165,22 @@ class Product extends Model
     {
         return $this->hasOne(Solde::class);
     }
+
+    public function getDiscountedPrice()
+    {
+
+        $price=$this->getPrice();
+        $solde = $this->soldes()->where('starts_at', '<=', now())->where('ends_at', '>=', now())->first();
+        if ($solde) {
+             return $price - ($price * $solde->value / 100);
+        }
+        $categoriediscount = $this->Category->soldes()->where('starts_at', '<=', now())->where('ends_at', '>=', now())->first();
+        if ($categoriediscount) {
+            return $price - ($price * $categoriediscount->value / 100);
+        }
+        return $price;
+
+
+    }
+
 }

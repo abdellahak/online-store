@@ -41,22 +41,11 @@ class AdminSoldeController extends Controller
             'ends_at' => 'required|date|after:starts_at',
         ]);
         Solde::create($request->all());
-        $product_id=$request->input('product_id');
-        $category_id=$request->input('category_id');
-        if ($product_id) {
-            $product = Product::find($product_id);
-            $discountedPrice = $product->getPrice() - ($product->getPrice() * $request->input('value') / 100);
-            $product->setPrice($discountedPrice);
-            $product->save();
-        }
-        if ($category_id) {
-            $products = Product::where('category_id', $category_id)->get();
-            foreach ($products as $product) {
-                $discountedPrice = $product->getPrice() - ($product->getPrice() * $request->input('value') / 100);
-                $product->setPrice($discountedPrice);
-                $product->save();
-            }
-        }
+    
+
+
+      
+     
 
       
 

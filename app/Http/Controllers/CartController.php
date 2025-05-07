@@ -75,11 +75,11 @@ class CartController extends Controller
                 $quantity = $productsInCookie[$product->getId()];
                 $item = new Item();
                 $item->setQuantity($quantity);
-                $item->setPrice($product->getPrice());
+                $item->setPrice($product->getDiscountedPrice());
                 $item->setProductId($product->getId());
                 $item->setOrderId($order->getId());
                 $item->save();
-                $total += $product->getPrice() * $quantity;
+                $total += $product->getDiscountedPrice() * $quantity;
 
                 // Update product quantity in store
                 $product->setQuantityStore($product->getQuantityStore() - $quantity);
