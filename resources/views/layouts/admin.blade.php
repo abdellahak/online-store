@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   <link href="{{ asset('/css/admin.css') }}" rel="stylesheet" />
   <title>@yield('title', 'Admin - Online Store')</title>
+  @stack('styles')
 </head>
 
 <body>
@@ -25,6 +26,9 @@
         <li><a href="{{ route('admin.category.index') }}" class="nav-link text-white">- Admin - Categories</a></li>
         <li><a href="{{ route('admin.supplier.index') }}" class="nav-link text-white">- Admin - Supplier</a></li>
         <li><a href="{{ route('admin.order.index') }}" class="nav-link text-white">- Admin - Orders</a></li>
+        @if (Auth::user() && Auth::user()->is_super_admin)
+          <li><a href="{{ route('admin.user.index') }}" class="nav-link text-white">- Admin - Users</a></li>
+        @endif
         <li>
           <a href="{{ route('home.index') }}" class="mt-2 btn bg-primary text-white">Go back to the home page</a>
         </li>
@@ -56,8 +60,9 @@
   </div>
   <!-- footer -->
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
+  @stack('scripts')
 </body>
 
 </html>
