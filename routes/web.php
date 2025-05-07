@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,14 @@ Route::middleware('admin')->group(function () {
     Route::put('/admin/supplier/{id}/update','App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
     Route::get('/admin/filtered-products-supplier', 'App\Http\Controllers\Admin\AdminProductController@filterparsupplier')->name("admin.product.filterparsupplier");
 
+});
+
+Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [AdminUserController::class, 'index'])->name('user.index');
+    Route::post('/users/store', [AdminUserController::class, 'store'])->name('user.store');
+    Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('user.edit');
+    Route::put('/users/{id}/update', [AdminUserController::class, 'update'])->name('user.update');
+    Route::delete('/users/{id}/delete', [AdminUserController::class, 'destroy'])->name('user.delete');
 });
 
 Auth::routes();

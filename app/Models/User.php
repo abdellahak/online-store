@@ -38,6 +38,8 @@ class User extends Authenticatable
         'email',
         'password',
         'balance',
+        'role',
+        'is_super_admin',
     ];
 
     /**
@@ -137,6 +139,16 @@ class User extends Authenticatable
     public function setUpdatedAt($updatedAt)
     {
         $this->attributes['updated_at'] = $updatedAt;
+    }
+
+    public function getIsSuperAdmin()
+    {
+        return $this->attributes['is_super_admin'];
+    }
+
+    public function setIsSuperAdmin($isSuperAdmin)
+    {
+        $this->attributes['is_super_admin'] = $isSuperAdmin;
     }
 
     public function orders()
