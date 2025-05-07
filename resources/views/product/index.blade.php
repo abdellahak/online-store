@@ -4,6 +4,17 @@
 @section('content')
 
   <div class="row">
+
+<div>
+  <form method="GET" action="{{route("product.index")}}">
+<input type="checkbox" name="show_sales" id="show_sales" {{request("show_sales")? "checked":""}} 
+<label for="show_sales">Show Soldes</label>
+
+</form>
+
+</div>
+
+
     @foreach ($viewData['products'] as $product)
       <div class="col-md-4 col-lg-3 mb-2">
         <div class="card">
