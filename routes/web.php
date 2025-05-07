@@ -46,6 +46,9 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/supplier/{id}/edit','App\Http\Controllers\Admin\AdminSupplierController@edit')->name("admin.supplier.edit");
     Route::put('/admin/supplier/{id}/update','App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
     Route::get('/admin/filtered-products-supplier', 'App\Http\Controllers\Admin\AdminProductController@filterparsupplier')->name("admin.product.filterparsupplier");
+    Route::get('/admin/orders', 'App\Http\Controllers\Admin\AdminOrderController@index')->name("admin.order.index");
+    Route::put('/admin/orders/{id}/update', 'App\Http\Controllers\Admin\AdminOrderController@update')->name("admin.order.update");
+    Route::delete('/admin/orders/{id}/destroy', 'App\Http\Controllers\Admin\AdminOrderController@destroy')->name("admin.order.destroy");
 
     Route::get('/admin/solde', 'App\Http\Controllers\Admin\AdminSoldeController@index')->name("admin.soldes.index");
     Route::post('/admin/solde/store', 'App\Http\Controllers\Admin\AdminSoldeController@store')->name("admin.soldes.store");
