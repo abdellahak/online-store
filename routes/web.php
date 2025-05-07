@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +26,10 @@ Route::get('/cart/delete', 'App\Http\Controllers\CartController@delete')->name("
 Route::post('/cart/add/{id}', 'App\Http\Controllers\CartController@add')->name("cart.add");
 
 Route::middleware('auth')->group(function () {
-    Route::get('/cart/purchase', 'App\Http\Controllers\CartController@purchase')->name("cart.purchase");
     Route::get('/my-account/orders', 'App\Http\Controllers\MyAccountController@orders')->name("myaccount.orders");
+    Route::get('/cart/choose-payment', [CartController::class, 'choosePayment'])->name('cart.choosePayment');
+    Route::post('/cart/purchase-online', [CartController::class, 'purchaseOnline'])->name('cart.purchaseOnline');
+    Route::post('/cart/purchase-cod', [CartController::class, 'purchaseCod'])->name('cart.purchaseCod');
 });
 
 Route::middleware('admin')->group(function () {

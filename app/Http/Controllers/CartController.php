@@ -15,7 +15,7 @@ class CartController extends Controller
     {
         $total = 0;
         $productsInCart = [];
-
+        $user = Auth::user();
         $productsInCookie = json_decode(Cookie::get('cart'), true);
         if ($productsInCookie) {
             $productsInCart = Product::findMany(array_keys($productsInCookie));
@@ -26,6 +26,7 @@ class CartController extends Controller
         $viewData["title"] = "Cart - Online Store";
         $viewData["subtitle"] =  "Shopping Cart";
         $viewData["total"] = $total;
+        $viewData["user"] = $user;
         $viewData["products"] = $productsInCart;
         return view('cart.index')->with("viewData", $viewData);
     }
@@ -58,7 +59,21 @@ class CartController extends Controller
         return back()->withCookie(Cookie::forget('cart'));
     }
 
-    public function purchase(Request $request)
+    public function choosePayment(Request $request)
+{
+    $productsInCookie = json_decode(Cookie::get('cart'), true);
+    $total = 0;
+    $productsInCart = [];
+    if ($productsInCookie) {
+        $productsInCart = Product::findMany(array_keys($productsInCookie));
+        $total = Product::sumPricesByQuantities($productsInCart, $productsInCookie);
+    }
+    $viewData = [];
+    $viewData["total"] = $total;
+    return view('cart.choose_payment')->with("viewData", $viewData);
+}
+
+    public function purchaseOnline(Request $request)
     {
         $productsInCookie = json_decode(Cookie::get('cart'), true);
         if ($productsInCookie) {
@@ -67,6 +82,7 @@ class CartController extends Controller
             $order = new Order();
             $order->setUserId($userId);
             $order->setTotal(0);
+            $order->setPaymentType('online');
             $order->save();
 
             $total = 0;
@@ -104,4 +120,52 @@ class CartController extends Controller
             return redirect()->route('cart.index');
         }
     }
+
+
+
+    public function purchaseCod(Request $request)
+{
+    $productsInCookie = json_decode(Cookie::get('cart'), true);
+    if ($productsInCookie) {
+        $user = Auth::user();
+        $userId = $user->id;
+        $order = new Order();
+        $order->setUserId($userId);
+        $order->setTotal(0);
+        $order->setPaymentType('cod'); 
+        $order->save();
+
+        $total = 0;
+        $productsInCart = Product::findMany(array_keys($productsInCookie));
+        foreach ($productsInCart as $product) {
+            $quantity = $productsInCookie[$product->getId()];
+            $item = new Item();
+            $item->setQuantity($quantity);
+            $item->setPrice($product->getPrice());
+            $item->setProductId($product->getId());
+            $item->setOrderId($order->getId());
+            $item->save();
+            $total += $product->getPrice() * $quantity;
+
+            // Update product quantity in store
+            $product->setQuantityStore($product->getQuantityStore() - $quantity);
+            $product->save();
+        }
+        $order->setTotal($total);
+        $order->save();
+
+        // PAS de débit du solde utilisateur ici
+
+        // Clear the cart cookie after purchase
+        Cookie::queue(Cookie::forget('cart'));
+
+        $viewData = [];
+        $viewData["title"] = "Purchase - Online Store";
+        $viewData["subtitle"] =  "Purchase Status";
+        $viewData["order"] =  $order;
+        return view('cart.purchase')->with("viewData", $viewData);
+    } else {
+        return redirect()->route('cart.index');
+    }
+}
 }

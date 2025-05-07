@@ -115,8 +115,16 @@ class Order extends Model
     {
         $this->attributes['status'] = $status;
     }
+    public function setPaymentType($payment_type)
+    {
+        $this->attributes['payment_type'] = $payment_type;
+    }
     public function getStatus()
     {
         return $this->attributes['status'];
+    }
+    public function getPaymentType()
+    {
+        return $this->attributes['payment_type'];
     }
 }
