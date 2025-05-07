@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('total');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->enum("status",["Emballé","Envoyé","En route","Recu","Retournée","fermée"])->default(("Emballé"));
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

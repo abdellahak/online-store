@@ -48,6 +48,10 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/filtered-products-supplier', 'App\Http\Controllers\Admin\AdminProductController@filterparsupplier')->name("admin.product.filterparsupplier");
     Route::get('/admin/products/export', 'App\Http\Controllers\Admin\AdminProductController@exportCsv')->name('admin.product.export');
     Route::post('/admin/products/import',  'App\Http\Controllers\Admin\AdminProductController@importCsv')->name('admin.product.import');
+    Route::get('/admin/orders', 'App\Http\Controllers\Admin\AdminOrderController@index')->name("admin.order.index");
+    Route::put('/admin/orders/{id}/update', 'App\Http\Controllers\Admin\AdminOrderController@update')->name("admin.order.update");
+    Route::delete('/admin/orders/{id}/destroy', 'App\Http\Controllers\Admin\AdminOrderController@destroy')->name("admin.order.destroy");
+
 });
 
 Auth::routes();
