@@ -89,7 +89,16 @@
       </form>
     </div>
   </div>
-
+  
+  <div class="d-flex align-items-center gap-2">
+    <a href="{{ route('admin.product.export') }}" class="btn btn-success mb-2">Exporter CSV</a>
+    <form action="{{ route('admin.product.import') }}" method="POST" enctype="multipart/form-data" style="display:inline;">
+        @csrf
+        <button type="submit" class="btn btn-primary mb-2">Importer CSV</button>
+        <input type="file" class="mb-2" name="csv_file" accept=".csv"  required>
+    </form>
+  </div>
+  
 <div class="card">
   <div class="card-header">
     Manage Products

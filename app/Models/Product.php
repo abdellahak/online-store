@@ -18,6 +18,16 @@ class Product extends Model
      * $this->attributes['updated_at'] - timestamp - contains the product update date
      * $this->items - Item[] - contains the associated items
      */
+    protected $fillable = [
+        'id',
+        'name',
+        'description',
+        'price',
+        'quantity_store',
+        'category_id',
+        'supplier_id',
+        'image',
+    ];
 
     public static function validate($request)
     {

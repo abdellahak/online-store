@@ -46,7 +46,8 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/supplier/{id}/edit','App\Http\Controllers\Admin\AdminSupplierController@edit')->name("admin.supplier.edit");
     Route::put('/admin/supplier/{id}/update','App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
     Route::get('/admin/filtered-products-supplier', 'App\Http\Controllers\Admin\AdminProductController@filterparsupplier')->name("admin.product.filterparsupplier");
-
+    Route::get('/admin/products/export', 'App\Http\Controllers\Admin\AdminProductController@exportCsv')->name('admin.product.export');
+    Route::post('/admin/products/import',  'App\Http\Controllers\Admin\AdminProductController@importCsv')->name('admin.product.import');
 });
 
 Auth::routes();

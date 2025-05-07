@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class AdminProductController extends Controller
 {
@@ -128,5 +129,71 @@ class AdminProductController extends Controller
         $viewData["suppliers"] = Supplier::all();
 
         return view('admin.product.index')->with("viewData", $viewData);
+    }
+
+
+
+    public function exportCsv()
+    {
+        $products = Product::all();
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=products.csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['id', 'name', 'description', 'price', 'quantity_store', 'category_id', 'supplier_id', 'image', 'created_at', 'updated_at'];
+
+        $callback = function() use ($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($products as $product) {
+                fputcsv($file, [
+                    $product->id,
+                    $product->name,
+                    $product->description,
+                    $product->price,
+                    $product->quantity_store,
+                    $product->category_id,
+                    $product->supplier_id,
+                    $product->image,
+                    $product->created_at,
+                    $product->updated_at,
+                ]);
+            }
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt'
+        ]);
+
+        $file = $request->file('csv_file');
+        $handle = fopen($file, 'r');
+        $header = fgetcsv($handle);
+
+        while (($row = fgetcsv($handle)) !== false) {
+            $data = array_combine($header, $row);
+            Product::updateOrCreate(['id' => $data['id']], [
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'price' => $data['price'],
+                'quantity_store' => $data['quantity_store'],
+                'category_id' => $data['category_id'],
+                'supplier_id' => $data['supplier_id'],
+                'image' => $data['image'],
+            ]);
+        }
+        fclose($handle);
+
+        return redirect()->route('admin.product.index')->with('success', 'Importation réussie.');
     }
 }
