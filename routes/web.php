@@ -57,7 +57,12 @@ Route::middleware('admin')->group(function () {
     Route::put('/admin/orders/{id}/update', 'App\Http\Controllers\Admin\AdminOrderController@update')->name("admin.order.update");
     Route::delete('/admin/orders/{id}/destroy', 'App\Http\Controllers\Admin\AdminOrderController@destroy')->name("admin.order.destroy");
 
-});
+    Route::get('/admin/solde', 'App\Http\Controllers\Admin\AdminSoldeController@index')->name("admin.soldes.index");
+    Route::post('/admin/solde/store', 'App\Http\Controllers\Admin\AdminSoldeController@store')->name("admin.soldes.store");
+    Route::delete('/admin/solde/{id}/destroy', 'App\Http\Controllers\Admin\AdminSoldeController@destroy')->name("admin.soldes.destroy");
+    Route::get('/admin/solde/{id}/edit', 'App\Http\Controllers\Admin\AdminSoldeController@edit')->name("admin.soldes.edit");
+    Route::put('/admin/solde/{id}/update', 'App\Http\Controllers\Admin\AdminSoldeController@update')->name("admin.soldes.update");
+}); 
 
 Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminUserController::class, 'index'])->name('user.index');

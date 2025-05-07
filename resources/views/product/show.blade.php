@@ -17,8 +17,22 @@
       <div class="col-md-8">
         <div class="card-body">
           <h5 class="card-title">
-            {{ $viewData['product']->getName() }} (${{ $viewData['product']->getPrice() }})
+            @php
+              $solde = $viewData['product']->getDiscountedPrice();
+              $hassolde =$solde < $viewData['product']->getPrice();
+
+
+          
+            @endphp
+            @if ($hassolde)
+
+              <span class="text-decoration-line-through">${{ $viewData['product']->getPrice() }}</span>
+            {{ $viewData['product']->getName() }} (${{ $solde }}) <span class="badge bg-danger">Sale</span>
+            @else
+              {{ $viewData['product']->getName() }} (${{ $viewData['product']->getPrice() }})
+            @endif
           </h5>
+
           <p class="card-text">{{ $viewData['product']->getDescription() }}</p>
           <p class="card-text">Quantity in Stock: {{ $viewData['product']->getQuantityStore() }}</p>
           <p class="card-text">

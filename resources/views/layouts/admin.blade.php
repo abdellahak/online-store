@@ -25,6 +25,8 @@
         <li><a href="{{ route('admin.product.index') }}" class="nav-link text-white">- Admin - Products</a></li>
         <li><a href="{{ route('admin.category.index') }}" class="nav-link text-white">- Admin - Categories</a></li>
         <li><a href="{{ route('admin.supplier.index') }}" class="nav-link text-white">- Admin - Supplier</a></li>
+        <li><a href="{{ route('admin.soldes.index') }}" class="nav-link text-white">- Admin - Soldes</a></li>
+
         <li><a href="{{ route('admin.order.index') }}" class="nav-link text-white">- Admin - Orders</a></li>
         @if (Auth::user() && Auth::user()->is_super_admin)
           <li><a href="{{ route('admin.user.index') }}" class="nav-link text-white">- Admin - Users</a></li>
