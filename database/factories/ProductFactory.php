@@ -21,7 +21,7 @@ class ProductFactory extends Factory
         return [
             "name" => fake()->unique()->word(),
             "description" => fake()->sentence(10),
-            "price" => fake()->randomFloat(2, 1, 1000),
+            "price" => fake()->randomFloat(2, 1, 300),
             "quantity_store" => fake()->numberBetween(1, 100),
             "category_id" => Category::inRandomOrder()->first()->id,
             "supplier_id" => Supplier::inRandomOrder()->first()->id,

@@ -20,6 +20,7 @@ class OrderFactory extends Factory
             "total" => 0,
             "user_id" => 1,
             "status" => $this->faker->randomElement(["Emballé", "Envoyé", "En route", "Recu", "Retournée", "fermée"]),
+            "payment_type" => $this->faker->randomElement(["cod", "online"]),
         ];
     }
 }

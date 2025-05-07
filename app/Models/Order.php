@@ -21,6 +21,12 @@ class Order extends Model
      */
 
     use HasFactory;
+    protected $fillable = [
+        'total',
+        'user_id',
+        'status',
+        'payment_type',
+    ];
     public static function validate($request)
     {
         $request->validate([
