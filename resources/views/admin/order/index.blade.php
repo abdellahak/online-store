@@ -40,6 +40,7 @@
           <th scope="col">Total</th>
           <th scope="col">User Name</th>
           <th scope="col">Status</th>
+          <th scope="col">Payment Type</th>
           <th scope="col">Delete</th>
         </tr>
       </thead>
@@ -75,6 +76,13 @@
                         </select>
                     </div>
                   </form>
+            </td>
+            <td>
+              @if($order->getPaymentType() == 'cod')
+                Cash on Delivery
+              @else
+                Paid
+              @endif
             </td>
             <td>
               <form action="{{ route('admin.order.destroy', $order->getId())}}" method="POST">
