@@ -165,6 +165,13 @@ class Product extends Model
     {
         return $this->hasOne(Solde::class);
     }
+    public function hasSoldes()
+    {
+        $solde = $this->getDiscountedPrice();
+        $hassolde =$solde < $this->getPrice();
+        return $hassolde;
+
+    }
 
     public function getDiscountedPrice()
     {
