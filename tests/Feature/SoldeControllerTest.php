@@ -19,15 +19,23 @@ class SoldeControllerTest extends TestCase
 
         $category = Category::factory()->create();
         $supplier = Supplier::factory()->create(); 
-       $product = Product::factory()->create();  // Create a product
-        // Create a supplier
+       $product = Product::factory()->create([
+        'category_id' => $category->id, 
+        'supplier_id' => $supplier->id,
+       ]);
       
         $user = User::factory()->create(['role' => 'admin']);
         $this->actingAs($user);
 
        
         Solde::factory()->count(3)->create(
-            []
+            [
+                'value' => 30,
+                'product_id' => $product->id, 
+                'category_id' => $category->id,
+                'starts_at' => now()->subDays(3),
+                'ends_at' => now()->addDays(7),
+            ]
         );
 
         $response = $this->get(route('admin.soldes.index'));  // Request the solde list
@@ -45,7 +53,6 @@ class SoldeControllerTest extends TestCase
         $product = Product::factory()->create();  // Create a product
 
         $response = $this->post(route('admin.soldes.store'), [
-           
             'product_id' => $product->id,
             'category_id' => $category->id,
             'value' => 30,  // Value for the solde
