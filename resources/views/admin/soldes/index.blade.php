@@ -99,7 +99,6 @@
     Manage Soldes
   </div>
   <div class="card-body">
-    {{-- <a href="{{ route('admin.soldes.create') }}" class="btn btn-primary mb-3">Add New Solde</a> --}}
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
