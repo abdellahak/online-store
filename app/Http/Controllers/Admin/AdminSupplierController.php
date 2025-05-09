@@ -15,7 +15,7 @@ class AdminSupplierController extends Controller
     {
         $viewData = [];
         $viewData["title"] = "Admin Page - Suppliers - Online Store";
-        $viewData["suppliers"] = Supplier::all();
+        $viewData["suppliers"] = Supplier::paginate(5);
         return view('admin.supplier.index')->with("viewData", $viewData);
     }
 
@@ -71,8 +71,8 @@ class AdminSupplierController extends Controller
         $request->validate([
             'raison_sociale' => 'required|string|max:255',
             'adresse' => 'required|string|max:255',
-            'tele' => "required|string|regex:/^\+?[0-9]{10,15}$/|unique:suppliers,tele,".$id,
-            'email' => "required|email|unique:suppliers,email,".$id,
+            'tele' => "required|string|regex:/^\+?[0-9]{10,15}$/|unique:suppliers,tele," . $id,
+            'email' => "required|email|unique:suppliers,email," . $id,
             'description' => 'nullable|string|max:1000',
         ]);
 

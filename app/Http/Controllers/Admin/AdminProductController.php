@@ -16,7 +16,7 @@ class AdminProductController extends Controller
     {
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
-        $viewData["products"] = Product::all();
+        $viewData["products"] = Product::paginate(10);
         $viewData["categories"] = Category::all(); 
         $viewData["suppliers"] = Supplier::all(); 
 

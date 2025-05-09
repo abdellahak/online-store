@@ -11,8 +11,8 @@
         <div class="form-check form-switch">
           <input type="checkbox" name="show_sales" id="showSales" {{ old('show_sales') ? 'checked' : '' }}
             class="form-check-input" role="switch" {{ request('show_sales') ? 'checked' : '' }}
-            onchange="this.form.submit()">
-          <label class="form-check-label" for="showSales">Show Only Sales</label>
+            onchange="this.form.submit()" style="cursor: pointer;">
+          <label class="form-check-label" for="showSales" style="cursor: pointer;">Show Only Sales</label>
         </div>
       </form>
 
@@ -20,7 +20,7 @@
 
     @if ($viewData['products']->isEmpty())
       <div class="col-12 d-flex justify-content-center align-items-center" style="height: 350px;">
-        <div class="text-center p-5 rounded" >
+        <div class="text-center p-5 rounded">
           <div style="font-size: 3rem; color: #6c757d;">
             <i class="bi bi-box-seam"></i>
           </div>
@@ -56,6 +56,52 @@
       @endforeach
     @endif
   </div>
+  @if ($viewData['products']->count())
+    <div class="d-flex flex-column align-items-center mt-4">
+      @php
+        $paginator = $viewData['products'];
+      @endphp
+
+
+      <nav>
+        <ul class="pagination">
+          @if ($paginator->onFirstPage())
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+          @else
+            <li class="page-item">
+              <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev">&laquo;</a>
+            </li>
+          @endif
+
+          @foreach ($paginator->links()->elements[0] as $page => $url)
+            @if ($page == $paginator->currentPage())
+              <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+            @else
+              <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+            @endif
+          @endforeach
+
+          @if ($paginator->hasMorePages())
+            <li class="page-item">
+              <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next">&raquo;</a>
+            </li>
+          @else
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+          @endif
+        </ul>
+      </nav>
+      <div class="mb-2 text-muted small">
+        Showing
+        <strong>{{ $paginator->firstItem() ?? 0 }}</strong>
+        to
+        <strong>{{ $paginator->lastItem() ?? 0 }}</strong>
+        of
+        <strong>{{ $paginator->total() }}</strong>
+        products
+        (Page <strong>{{ $paginator->currentPage() }}</strong> of <strong>{{ $paginator->lastPage() }}</strong>)
+      </div>
+    </div>
+  @endif
 @endsection
 @push('styles')
   <style>

@@ -14,7 +14,7 @@ class AdminUserController extends Controller
     {
         $viewData = [
             'title' => 'Admin User Management',
-            'users' => User::all(),
+            'users' => User::paginate(10),
         ];
         return view('admin.user.index')->with("viewData", $viewData);
     }

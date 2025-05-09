@@ -15,7 +15,7 @@ class AdminOrderController extends Controller
     {
         $viewData = [];
         $viewData["title"] = "Admin Page - Orders - Online Store";
-        $viewData["orders"] = Order::all(); // Fetch orders from the database
+        $viewData["orders"] = Order::paginate(10);
         return view('admin.order.index')->with("viewData", $viewData);
     }
 

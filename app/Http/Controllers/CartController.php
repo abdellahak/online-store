@@ -77,16 +77,25 @@ class CartController extends Controller
     {
         $productsInCookie = json_decode(Cookie::get('cart'), true);
         if ($productsInCookie) {
-            $user = Auth::user(); // Get the authenticated user
-            $userId = $user->id; // Access id directly
+            $user = Auth::user();
+            $productsInCart = Product::findMany(array_keys($productsInCookie));
+            $total = 0;
+            foreach ($productsInCart as $product) {
+                $quantity = $productsInCookie[$product->getId()];
+                $total += $product->getDiscountedPrice() * $quantity;
+            }
+
+            if ($user->balance < $total) {
+                return back()->with('error', 'Your balance is insufficient to complete this purchase. Please choose the Cash on Delivery option or add funds to your account.');
+            }
+
+            $userId = $user->id;
             $order = new Order();
             $order->setUserId($userId);
             $order->setTotal(0);
             $order->setPaymentType('online');
             $order->save();
 
-            $total = 0;
-            $productsInCart = Product::findMany(array_keys($productsInCookie));
             foreach ($productsInCart as $product) {
                 $quantity = $productsInCookie[$product->getId()];
                 $item = new Item();
@@ -95,18 +104,18 @@ class CartController extends Controller
                 $item->setProductId($product->getId());
                 $item->setOrderId($order->getId());
                 $item->save();
-                $total += $product->getDiscountedPrice() * $quantity;
 
                 // Update product quantity in store
                 $product->setQuantityStore($product->getQuantityStore() - $quantity);
                 $product->save();
             }
+
             $order->setTotal($total);
             $order->save();
 
-            $newBalance = $user->balance - $total; // Access balance directly
-            $user->balance = $newBalance; // Set balance directly
-            $user->save(); // Eloquent save method
+            $newBalance = $user->balance - $total;
+            $user->balance = $newBalance;
+            $user->save();
 
             // Clear the cart cookie after purchase
             Cookie::queue(Cookie::forget('cart'));
