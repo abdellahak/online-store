@@ -5,28 +5,28 @@
 
   <div class="row">
 
-<div>
-  <form method="GET" action="{{route("product.index")}}">
-<input type="checkbox" name="show_sales" id="show_sales" {{request("show_sales")? "checked":""}} 
-onchange="this.form.submit()">  
-<label for="show_sales">Filter Soldes</label>
+    <div>
+      <form method="GET" action="{{ route('product.index') }}">
+        <input type="checkbox" name="show_sales" id="show_sales" {{ request('show_sales') ? 'checked' : '' }}
+          onchange="this.form.submit()">
+        <label for="show_sales">Filter Soldes</label>
 
-</form>
+      </form>
 
-</div>
+    </div>
 
 
     @foreach ($viewData['products'] as $product)
       <div class="col-md-4 col-lg-3 mb-2">
         <div class="card">
-          <img src="{{ asset('/storage' . $product->getImage()) }}" class="card-img-top img-card">
+          <img src="{{ asset('storage/' . $product->getImage()) }}" class="card-img-top img-card">
           <div class="card-body text-center d-flex flex-column justify-content-between">
             <a href="{{ route('product.show', ['id' => $product->getId()]) }}"
               class="btn text-white {{ $product->getQuantityStore() == 0 ? 'bg-danger' : 'bg-primary' }}">
-                {{ $product->getName() }}
-                @if ($product->getQuantityStore() == 0)
+              {{ $product->getName() }}
+              @if ($product->getQuantityStore() == 0)
                 <span class="text-white ms-2 small">(Out of stock)</span>
-                @endif
+              @endif
             </a>
           </div>
         </div>

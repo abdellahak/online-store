@@ -7,10 +7,12 @@
     Products in Cart
   </div>
   <div class="card-body">
+    @if($viewData["user"])
     <div class="mb-3">
       <h5 class="text-primary">Your Balance:</h5>
       <p class="fs-5 text-success"><b>${{ number_format($viewData["user"]->balance, 2) }}</b></p>
     </div>
+    @endif
     <table class="table table-bordered table-striped text-center">
       <thead>
         <tr>
