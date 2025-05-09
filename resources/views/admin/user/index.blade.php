@@ -150,13 +150,10 @@
   <style>
     #isSuperAdminCheckbox {
       width: 3em;
-      /* Adjust width for desired size */
       height: 1.5em;
-      /* Adjust height for desired size */
       cursor: pointer;
     }
 
-    /* Optional: Style the label a bit more if needed */
     label[for="isSuperAdminCheckbox"] {
       padding-left: 0.5em;
       vertical-align: middle;
