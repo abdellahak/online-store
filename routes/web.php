@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,7 @@ Route::middleware('admin')->group(function () {
     Route::delete('/admin/solde/{id}/destroy', 'App\Http\Controllers\Admin\AdminSoldeController@destroy')->name("admin.soldes.destroy");
     Route::get('/admin/solde/{id}/edit', 'App\Http\Controllers\Admin\AdminSoldeController@edit')->name("admin.soldes.edit");
     Route::put('/admin/solde/{id}/update', 'App\Http\Controllers\Admin\AdminSoldeController@update')->name("admin.soldes.update");
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard.index');
 }); 
 
 Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->group(function () {

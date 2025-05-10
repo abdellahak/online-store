@@ -22,6 +22,7 @@
       <hr />
       <ul class="nav flex-column">
         <li><a href="{{ route('admin.home.index') }}" class="nav-link text-white">- Admin - Home</a></li>
+        <li><a href="{{ route('admin.dashboard.index') }}" class="nav-link text-white">- Admin - Dashboard</a></li>
         <li><a href="{{ route('admin.product.index') }}" class="nav-link text-white">- Admin - Products</a></li>
         <li><a href="{{ route('admin.category.index') }}" class="nav-link text-white">- Admin - Categories</a></li>
         <li><a href="{{ route('admin.supplier.index') }}" class="nav-link text-white">- Admin - Supplier</a></li>
