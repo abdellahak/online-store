@@ -14,6 +14,7 @@
         Refresh</a>
     </div>
 
+    {{-- Quick Links --}}
     <div class="card mb-4">
       <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
@@ -79,262 +80,270 @@
       </div>
     </div>
 
-    <div class="card mb-4">
-      <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Dashboard Overview</h5>
+    {{-- Exportable Dashboard Content --}}
+    <div id="dashboard-export-content">
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Dashboard Overview</h5>
+          </div>
+          <p class="text-muted mb-0">View key performance indicators and charts for the selected period.</p>
         </div>
-        <p class="text-muted mb-0">View key performance indicators and charts for the selected period.</p>
-      </div>
-      <div class="card-body">
-        <form method="GET" class="row g-3 align-items-end mb-4">
-          <div class="col-md-3">
-            <label for="start_date" class="form-label fw-semibold">Start Date</label>
-            <input type="date" id="start_date" name="start_date" class="form-control" value="{{ $start }}">
-          </div>
-          <div class="col-md-3">
-            <label for="end_date" class="form-label fw-semibold">End Date</label>
-            <input type="date" id="end_date" name="end_date" class="form-control" value="{{ $end }}">
-          </div>
-          <div class="col-md-6 d-flex align-items-end">
-            <button type="submit" class="btn btn-lg btn-primary me-2"><i class="bi bi-search"></i> Filter</button>
-            @if (request('start_date') || request('end_date'))
-              <a href="{{ route('admin.dashboard.index') }}" class="btn btn-lg btn-secondary"><i
-                  class="bi bi-arrow-counterclockwise"></i> Reset</a>
-            @endif
-          </div>
-        </form>
-        {{-- KPIs Row --}}
-        <div class="row g-4 mb-4">
-          <div class="col-12 col-md-3">
-            <div class="card kpi-card text-white bg-primary shadow h-100">
-              <div class="card-body d-flex align-items-center justify-content-between">
-                <div>
-                  <h6 class="card-title mb-2">Period Revenue</h6>
-                  <div class="kpi-value count-up" data-target="{{ $revenueByPeriod }}">
-                    ${{ number_format($revenueByPeriod, 2) }}</div>
+        <div class="card-body">
+          {{-- Period Filter Form --}}
+          <form method="GET" class="row g-3 align-items-end mb-4 d-print-none" id="dashboard-period-form">
+            <div class="col-md-3">
+              <label for="start_date" class="form-label fw-semibold">Start Date</label>
+              <input type="date" id="start_date" name="start_date" class="form-control" value="{{ $start }}">
+            </div>
+            <div class="col-md-3">
+              <label for="end_date" class="form-label fw-semibold">End Date</label>
+              <input type="date" id="end_date" name="end_date" class="form-control" value="{{ $end }}">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <button type="submit" class="btn btn-lg btn-primary me-2"><i class="bi bi-search"></i> Filter</button>
+              @if (request('start_date') || request('end_date'))
+                <a href="{{ route('admin.dashboard.index') }}" class="btn btn-lg btn-secondary me-2"><i
+                    class="bi bi-arrow-counterclockwise"></i> Reset</a>
+              @endif
+              <button type="button" id="downloadPdfBtn" class="btn btn-lg btn-danger"><i
+                  class="bi bi-file-earmark-pdf"></i> Download PDF</button>
+            </div>
+          </form>
+          {{-- Everything below will be included in the PDF --}}
+          <div id="dashboard-main-content">
+            {{-- KPIs Row --}}
+            <div class="row g-4 mb-4">
+              <div class="col-12 col-md-3">
+                <div class="card kpi-card text-white bg-primary shadow h-100">
+                  <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="card-title mb-2">Period Revenue</h6>
+                      <div class="kpi-value count-up" data-target="{{ $revenueByPeriod }}">
+                        ${{ number_format($revenueByPeriod, 2) }}</div>
+                    </div>
+                    <i class="bi bi-cash-coin kpi-icon"></i>
+                  </div>
                 </div>
-                <i class="bi bi-cash-coin kpi-icon"></i>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card kpi-card text-white bg-success shadow h-100">
+                  <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="card-title mb-2">Orders</h6>
+                      <div class="kpi-value count-up" data-target="{{ $orderCount }}">{{ $orderCount }}</div>
+                    </div>
+                    <i class="bi bi-receipt kpi-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card kpi-card text-white bg-info shadow h-100">
+                  <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="card-title mb-2">Products Sold</h6>
+                      <div class="kpi-value count-up" data-target="{{ $productsSold }}">{{ $productsSold }}</div>
+                    </div>
+                    <i class="bi bi-box-seam kpi-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="card kpi-card text-white bg-warning shadow h-100">
+                  <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="card-title mb-2">Avg Order Amount</h6>
+                      <div class="kpi-value count-up" data-target="{{ $avgOrderAmount }}">
+                        ${{ number_format($avgOrderAmount, 2) }}</div>
+                    </div>
+                    <i class="bi bi-graph-up-arrow kpi-icon"></i>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-12 col-md-3">
-            <div class="card kpi-card text-white bg-success shadow h-100">
-              <div class="card-body d-flex align-items-center justify-content-between">
-                <div>
-                  <h6 class="card-title mb-2">Orders</h6>
-                  <div class="kpi-value count-up" data-target="{{ $orderCount }}">{{ $orderCount }}</div>
-                </div>
-                <i class="bi bi-receipt kpi-icon"></i>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-md-3">
-            <div class="card kpi-card text-white bg-info shadow h-100">
-              <div class="card-body d-flex align-items-center justify-content-between">
-                <div>
-                  <h6 class="card-title mb-2">Products Sold</h6>
-                  <div class="kpi-value count-up" data-target="{{ $productsSold }}">{{ $productsSold }}</div>
-                </div>
-                <i class="bi bi-box-seam kpi-icon"></i>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-md-3">
-            <div class="card kpi-card text-white bg-warning shadow h-100">
-              <div class="card-body d-flex align-items-center justify-content-between">
-                <div>
-                  <h6 class="card-title mb-2">Avg Order Amount</h6>
-                  <div class="kpi-value count-up" data-target="{{ $avgOrderAmount }}">
-                    ${{ number_format($avgOrderAmount, 2) }}</div>
-                </div>
-                <i class="bi bi-graph-up-arrow kpi-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
 
+            {{-- Charts Row --}}
+            <div class="row g-4 mb-4">
+              <div class="col-lg-6">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-success text-white fw-semibold">Revenue by Month (Chart)</div>
+                  <div class="card-body">
+                    <canvas id="revenueByMonthChart" height="120"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-primary text-white fw-semibold">Revenue by Day (Chart)</div>
+                  <div class="card-body">
+                    <canvas id="revenueByDayChart" height="120"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-4 mb-4">
+              <div class="col-lg-6">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue (Chart)</div>
+                  <div class="card-body">
+                    <canvas id="topProductsChart" height="200"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-warning text-white fw-semibold">Revenue by Category (Chart)</div>
+                  <div class="card-body">
+                    <canvas id="revenueByCategoryChart" height="120"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-
-        {{-- Charts Row --}}
-        <div class="row g-4 mb-4">
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-success text-white fw-semibold">Revenue by Month (Chart)</div>
-              <div class="card-body">
-                <canvas id="revenueByMonthChart" height="120"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-primary text-white fw-semibold">Revenue by Day (Chart)</div>
-              <div class="card-body">
-                <canvas id="revenueByDayChart" height="120"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row g-4 mb-4">
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue (Chart)</div>
-              <div class="card-body">
-                <canvas id="topProductsChart" height="200"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-warning text-white fw-semibold">Revenue by Category (Chart)</div>
-              <div class="card-body">
-                <canvas id="revenueByCategoryChart" height="120"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {{-- Tables Row --}}
-        <div class="row g-4">
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-primary text-white fw-semibold">Revenue by Day</div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-sm table-striped mb-0 align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Date</th>
-                        <th>Revenue</th>
-                        <th>Products Sold</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($revenueByDay as $row)
-                        <tr>
-                          <td>{{ $row->date }}</td>
-                          <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
-                          <td class="fw-semibold">{{ $row->products_sold }}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
+            {{-- Tables Row --}}
+            <div class="row g-4 tableDataContainer">
+              <div class="col-lg-6 tableData">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-primary text-white fw-semibold">Revenue by Day</div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-striped mb-0 align-middle">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Date</th>
+                            <th>Revenue</th>
+                            <th>Products Sold</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach ($revenueByDay as $row)
+                            <tr>
+                              <td>{{ $row->date }}</td>
+                              <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
+                              <td class="fw-semibold">{{ $row->products_sold }}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-success text-white fw-semibold">Revenue by Month (for the selected period only)
-              </div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-sm table-striped mb-0 align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Month</th>
-                        <th>Revenue</th>
-                        <th>Products Sold</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($revenueByMonth as $row)
-                        <tr>
-                          <td>{{ $row->month }}</td>
-                          <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
-                          <td class="fw-semibold">{{ $row->products_sold }}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
+              <div class="col-lg-6 tableData">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-success text-white fw-semibold">Revenue by Month (for the selected period
+                    only)
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-striped mb-0 align-middle">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Month</th>
+                            <th>Revenue</th>
+                            <th>Products Sold</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach ($revenueByMonth as $row)
+                            <tr>
+                              <td>{{ $row->month }}</td>
+                              <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
+                              <td class="fw-semibold">{{ $row->products_sold }}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue</div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-sm table-striped mb-0 align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Product</th>
-                        <th>Revenue</th>
-                        <th>Products Sold</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($revenueByProduct as $row)
-                        <tr>
-                          <td>{{ $row->name }}</td>
-                          <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
-                          <td class="fw-semibold">{{ $row->products_sold }}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
+              <div class="col-lg-6 tableData">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue</div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-striped mb-0 align-middle">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Product</th>
+                            <th>Revenue</th>
+                            <th>Products Sold</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach ($revenueByProduct as $row)
+                            <tr>
+                              <td>{{ $row->name }}</td>
+                              <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
+                              <td class="fw-semibold">{{ $row->products_sold }}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card shadow h-100">
-              <div class="card-header bg-warning text-white fw-semibold">Revenue by Category</div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-sm table-striped mb-0 align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Category</th>
-                        <th>Revenue</th>
-                        <th>Products Sold</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($revenueByCategory as $row)
-                        <tr>
-                          <td>{{ $row->name }}</td>
-                          <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
-                          <td class="fw-semibold">{{ $row->products_sold }}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
+              <div class="col-lg-6 tableData">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-warning text-white fw-semibold">Revenue by Category</div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-striped mb-0 align-middle">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Category</th>
+                            <th>Revenue</th>
+                            <th>Products Sold</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach ($revenueByCategory as $row)
+                            <tr>
+                              <td>{{ $row->name }}</td>
+                              <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
+                              <td class="fw-semibold">{{ $row->products_sold }}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-lg-12">
-            <div class="card shadow h-100">
-              <div class="card-header bg-secondary text-white fw-semibold">Revenue by Year (for the selected period only)
-              </div>
-              <div class="table-responsive">
-                <table class="table table-sm table-striped mb-0 align-middle">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Year</th>
-                      <th>Revenue</th>
-                      <th>Products Sold</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($revenueByYear as $row)
-                      <tr>
-                        <td>{{ $row->year }}</td>
-                        <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
-                        <td class="fw-semibold">{{ $row->products_sold }}</td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                </table>
+              <div class="col-lg-12 tableData">
+                <div class="card shadow h-100">
+                  <div class="card-header bg-secondary text-white fw-semibold">Revenue by Year (for the selected period
+                    only)
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0 align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Year</th>
+                          <th>Revenue</th>
+                          <th>Products Sold</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($revenueByYear as $row)
+                          <tr>
+                            <td>{{ $row->year }}</td>
+                            <td class="fw-semibold">${{ number_format($row->revenue, 2) }}</td>
+                            <td class="fw-semibold">{{ $row->products_sold }}</td>
+                          </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 @endsection
 
@@ -474,6 +483,9 @@
 @push('scripts')
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     window.dashboardData = {
       revenueByMonthLabels: {!! json_encode(collect($revenueByMonth)->pluck('month')) !!},
