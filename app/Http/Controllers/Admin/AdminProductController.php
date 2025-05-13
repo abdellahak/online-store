@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductImport;
 
 class AdminProductController extends Controller
 {
@@ -146,24 +147,22 @@ class AdminProductController extends Controller
                 "price" => $product->price,
                 "quantity_store" => $product->quantity_store,
                 "category" => $product->Category->name,
-                "supplier" => $product->supplier->name,
+                "supplier" => $product->supplier->raison_sociale,
                 "image" => $product->image,
             ]);
         } else {
             $products = Product::paginate(10)->getCollection()->map(fn($product) => [
-                "id" => $product->id,
                 "name" => $product->name,
                 "description" => $product->description,
                 "price" => $product->price,
                 "quantity_store" => $product->quantity_store,
                 "category" => $product->Category->name,
-                "supplier" => $product->supplier->name,
+                "supplier" => $product->supplier->raison_sociale,
                 "image" => $product->image,
             ]);
         }
         $products = $products->map(function ($product) {
             return [
-                'id' => $product['id'],
                 'name' => $product['name'],
                 'description' => $product['description'],
                 'price' => $product['price'],
@@ -184,27 +183,31 @@ class AdminProductController extends Controller
     public function importCsv(Request $request)
     {
         $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt'
+            'csv_file' => 'required|file|mimes:xlsx,csv,txt'
         ]);
 
-        $file = $request->file('csv_file');
-        $handle = fopen($file, 'r');
-        $header = fgetcsv($handle);
-
-        while (($row = fgetcsv($handle)) !== false) {
-            $data = array_combine($header, $row);
-            Product::updateOrCreate(['id' => $data['id']], [
-                'name' => $data['name'],
-                'description' => $data['description'],
-                'price' => $data['price'],
-                'quantity_store' => $data['quantity_store'],
-                'category_id' => $data['category_id'],
-                'supplier_id' => $data['supplier_id'],
-                'image' => $data['image'],
-            ]);
-        }
-        fclose($handle);
+        Excel::import(new ProductImport, $request->file('csv_file'));
 
         return redirect()->route('admin.product.index')->with('success', 'Importation réussie.');
+    }
+
+    public function downloadExample()
+    {
+        $exampleData = collect([
+            [
+                'name' => 'Example Product',
+                'description' => 'Description here',
+                'price' => 100,
+                'quantity_store' => 10,
+                'category_id' => 1,
+                'supplier_id' => 1,
+                'image' => 'example.jpg',
+            ]
+        ]);
+
+        return Excel::download(
+            new ProductExport($exampleData),
+            'products_example.xlsx'
+        );
     }
 }

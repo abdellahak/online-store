@@ -31,7 +31,6 @@ class ProductExport implements FromCollection, WithHeadings, WithStyles, WithEve
     public function headings(): array
     {
         return [
-            'ID',
             'Name',
             'Description',
             'Price',

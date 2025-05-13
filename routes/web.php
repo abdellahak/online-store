@@ -46,14 +46,15 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/categories/{id}/edit', 'App\Http\Controllers\Admin\AdminCategoryController@edit')->name("admin.category.edit");
     Route::put('/admin/categories/{id}/update', 'App\Http\Controllers\Admin\AdminCategoryController@update')->name("admin.category.update");
     Route::get('/admin/filtered-products', 'App\Http\Controllers\Admin\AdminProductController@filterparcategory')->name("admin.product.filterparcategory");
-    Route::get('/admin/supplier','App\Http\Controllers\Admin\AdminSupplierController@index')->name("admin.supplier.index");
-    Route::post('/admin/supplier/store','App\Http\Controllers\Admin\AdminSupplierController@store')->name("admin.supplier.store");
-    Route::delete('/admin/supplier/{id}/destroy','App\Http\Controllers\Admin\AdminSupplierController@destroy')->name("admin.supplier.destroy");
-    Route::get('/admin/supplier/{id}/edit','App\Http\Controllers\Admin\AdminSupplierController@edit')->name("admin.supplier.edit");
-    Route::put('/admin/supplier/{id}/update','App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
+    Route::get('/admin/supplier', 'App\Http\Controllers\Admin\AdminSupplierController@index')->name("admin.supplier.index");
+    Route::post('/admin/supplier/store', 'App\Http\Controllers\Admin\AdminSupplierController@store')->name("admin.supplier.store");
+    Route::delete('/admin/supplier/{id}/destroy', 'App\Http\Controllers\Admin\AdminSupplierController@destroy')->name("admin.supplier.destroy");
+    Route::get('/admin/supplier/{id}/edit', 'App\Http\Controllers\Admin\AdminSupplierController@edit')->name("admin.supplier.edit");
+    Route::put('/admin/supplier/{id}/update', 'App\Http\Controllers\Admin\AdminSupplierController@update')->name("admin.supplier.update");
     Route::get('/admin/filtered-products-supplier', 'App\Http\Controllers\Admin\AdminProductController@filterparsupplier')->name("admin.product.filterparsupplier");
     Route::get('/admin/products/export', 'App\Http\Controllers\Admin\AdminProductController@export')->name('admin.product.export');
     Route::post('/admin/products/import',  'App\Http\Controllers\Admin\AdminProductController@importCsv')->name('admin.product.import');
+    Route::get('/admin/products/example', 'App\Http\Controllers\Admin\AdminProductController@downloadExample')->name('admin.product.example');
     Route::get('/admin/orders', 'App\Http\Controllers\Admin\AdminOrderController@index')->name("admin.order.index");
     Route::put('/admin/orders/{id}/update', 'App\Http\Controllers\Admin\AdminOrderController@update')->name("admin.order.update");
     Route::delete('/admin/orders/{id}/destroy', 'App\Http\Controllers\Admin\AdminOrderController@destroy')->name("admin.order.destroy");
@@ -64,7 +65,7 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/solde/{id}/edit', 'App\Http\Controllers\Admin\AdminSoldeController@edit')->name("admin.soldes.edit");
     Route::put('/admin/solde/{id}/update', 'App\Http\Controllers\Admin\AdminSoldeController@update')->name("admin.soldes.update");
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard.index');
-}); 
+});
 
 Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminUserController::class, 'index'])->name('user.index');

@@ -93,17 +93,21 @@
   <div class="d-flex align-items-center gap-2">
     <form action="{{ route('admin.product.export') }}" method="GET" class="mb-2 d-flex gap-2 align-items-center"
       style="flex-wrap: wrap;">
-      <button type="submit" class="btn btn-primary" name="export" value="all">Export All</button>
-      <input type="hidden" name="page" value="{{ request()->query('page') ?? 1 }}">
-      <button type="submit" class="btn btn-outline-primary">Export this page only</button>
+      <button type="submit" class="btn btn-primary" name="all" value="1">Export All</button>
+      <button type="submit" class="btn btn-outline-primary" name="page"
+        value="{{ request()->query('page', 1) }}">Export Page</button>
     </form>
 
     <form action="{{ route('admin.product.import') }}" method="POST" enctype="multipart/form-data"
       style="display:inline;">
       @csrf
       <button type="submit" class="btn btn-primary mb-2">Importer CSV</button>
-      <input type="file" class="mb-2" name="csv_file" accept=".csv" required>
+      <input type="file" class="mb-2" name="csv_file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+        required>
     </form>
+
+    <a href="{{ route('admin.product.example') }}" class="btn btn-secondary mb-2">Download Example Excel</a>
   </div>
 
   <div class="card">
