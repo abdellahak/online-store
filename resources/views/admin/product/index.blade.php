@@ -91,7 +91,13 @@
   </div>
 
   <div class="d-flex align-items-center gap-2">
-    <a href="{{ route('admin.product.export') }}" class="btn btn-success mb-2">Exporter CSV</a>
+    <form action="{{ route('admin.product.export') }}" method="GET" class="mb-2 d-flex gap-2 align-items-center"
+      style="flex-wrap: wrap;">
+      <button type="submit" class="btn btn-primary" name="export" value="all">Export All</button>
+      <input type="hidden" name="page" value="{{ request()->query('page') ?? 1 }}">
+      <button type="submit" class="btn btn-outline-primary">Export this page only</button>
+    </form>
+
     <form action="{{ route('admin.product.import') }}" method="POST" enctype="multipart/form-data"
       style="display:inline;">
       @csrf

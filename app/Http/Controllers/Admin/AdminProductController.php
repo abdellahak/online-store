@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductExport;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminProductController extends Controller
 {
@@ -17,8 +19,8 @@ class AdminProductController extends Controller
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
         $viewData["products"] = Product::paginate(10);
-        $viewData["categories"] = Category::all(); 
-        $viewData["suppliers"] = Supplier::all(); 
+        $viewData["categories"] = Category::all();
+        $viewData["suppliers"] = Supplier::all();
 
         return view('admin.product.index')->with("viewData", $viewData);
     }
@@ -59,19 +61,19 @@ class AdminProductController extends Controller
 
     public function edit($id)
     {
-    $viewData = [];
-    $viewData["title"] = "Admin Page - Edit Product - Online Store";
-    $viewData["product"] = Product::findOrFail($id);
-    $viewData["categories"] = Category::all(); 
-    $viewData["suppliers"] = Supplier::all(); 
-    return view('admin.product.edit')->with("viewData", $viewData);
+        $viewData = [];
+        $viewData["title"] = "Admin Page - Edit Product - Online Store";
+        $viewData["product"] = Product::findOrFail($id);
+        $viewData["categories"] = Category::all();
+        $viewData["suppliers"] = Supplier::all();
+        return view('admin.product.edit')->with("viewData", $viewData);
     }
 
 
     public function update(Request $request, $id)
     {
         Product::validate($request);
-        
+
         $product = Product::findOrFail($id);
         $product->setCategoryId($request->input('category_id'));
         $product->setSupplierId($request->input('supplier_id'));
@@ -105,7 +107,7 @@ class AdminProductController extends Controller
             $viewData["products"] = Product::where('category_id', $category_id)->get();
         }
 
-        $viewData["categories"] = Category::all(); 
+        $viewData["categories"] = Category::all();
         $viewData["suppliers"] = Supplier::all();
 
 
@@ -116,12 +118,11 @@ class AdminProductController extends Controller
         $supplier_id = $request->input('supplier_id');
         $viewData = [];
         $viewData["title"] = "Admin Page - Products - Online Store";
-        if(
-            $supplier_id == "" 
-        ){
+        if (
+            $supplier_id == ""
+        ) {
             $viewData["products"] = Product::all();
- 
-        }else{
+        } else {
             $viewData["products"] = Product::where('supplier_id', $supplier_id)->get();
         }
 
@@ -133,41 +134,51 @@ class AdminProductController extends Controller
 
 
 
-    public function exportCsv()
+    public function export(Request $request)
     {
-        $products = Product::all();
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=products.csv",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
+        $page = $request->query("page");
+        $products = null;
+        if (!$page) {
+            $products = Product::all()->map(fn($product) => [
+                "id" => $product->id,
+                "name" => $product->name,
+                "description" => $product->description,
+                "price" => $product->price,
+                "quantity_store" => $product->quantity_store,
+                "category" => $product->Category->name,
+                "supplier" => $product->supplier->name,
+                "image" => $product->image,
+            ]);
+        } else {
+            $products = Product::paginate(10)->getCollection()->map(fn($product) => [
+                "id" => $product->id,
+                "name" => $product->name,
+                "description" => $product->description,
+                "price" => $product->price,
+                "quantity_store" => $product->quantity_store,
+                "category" => $product->Category->name,
+                "supplier" => $product->supplier->name,
+                "image" => $product->image,
+            ]);
+        }
+        $products = $products->map(function ($product) {
+            return [
+                'id' => $product['id'],
+                'name' => $product['name'],
+                'description' => $product['description'],
+                'price' => $product['price'],
+                'quantity_store' => $product['quantity_store'],
+                'category' => $product['category'],
+                'supplier' => $product['supplier'],
+                'image' => $product['image'],
+            ];
+        });
 
-        $columns = ['id', 'name', 'description', 'price', 'quantity_store', 'category_id', 'supplier_id', 'image', 'created_at', 'updated_at'];
-
-        $callback = function() use ($products, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($products as $product) {
-                fputcsv($file, [
-                    $product->id,
-                    $product->name,
-                    $product->description,
-                    $product->price,
-                    $product->quantity_store,
-                    $product->category_id,
-                    $product->supplier_id,
-                    $product->image,
-                    $product->created_at,
-                    $product->updated_at,
-                ]);
-            }
-            fclose($file);
-        };
-
-        return Response::stream($callback, 200, $headers);
+        $excel = collect($products);
+        if ($page) {
+            return Excel::download(new ProductExport($excel), "products-list-page-$page.xlsx");
+        }
+        return Excel::download(new ProductExport($excel), "products-list.xlsx");
     }
 
     public function importCsv(Request $request)
