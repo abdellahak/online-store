@@ -608,4 +608,15 @@ return [
         'download_pdf' => 'Download PDF',
     ],
 
+    'my_orders' => [
+        'order' => 'Order',
+        'date' => 'Date',
+        'total' => 'Total',
+        'id' => 'ID',
+        'name' => 'Product',
+        'price' => 'Price',
+        'quantity' => 'Quantity',
+        'empty' => 'Seems to be that you have not purchased anything in our store =(.',
+    ],
+
 ];

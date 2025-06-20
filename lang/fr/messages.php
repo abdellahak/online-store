@@ -584,5 +584,14 @@ return [
         'reset' => 'Réinitialiser',
         'download_pdf' => 'Télécharger PDF',
     ],
-
+    'my_orders' => [
+        'order' => 'Commande',
+        'date' => 'Date',
+        'total' => 'Total',
+        'id' => 'ID',
+        'name' => 'Produit',
+        'price' => 'Prix',
+        'quantity' => 'Quantité',
+        'empty' => "Il semble que vous n'ayez rien acheté dans notre boutique =(.",
+    ],
 ];
