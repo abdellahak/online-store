@@ -1,9 +1,9 @@
 @extends('layouts.admin')
-@section('title', 'Manage Soldes')
+@section('title', __('messages.admin.soldes.index.manage_title'))
 @section('content')
   <div class="card mb-4">
     <div class="card-header">
-      Create Products
+      {{ __('messages.admin.soldes.index.create_title') }}
     </div>
     <div class="card-body">
       @if ($errors->any())
@@ -19,7 +19,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">value:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.soldes.index.value') }}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="value" value="{{ old('value') }}" type="text" class="form-control">
               </div>
@@ -28,7 +28,7 @@
 
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">starts_at:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.soldes.index.starts_at') }}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="starts_at" value="{{ old('starts_at') }}" type="date" class="form-control">
               </div>
@@ -39,7 +39,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">ends_at:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.soldes.index.ends_at') }}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="ends_at" value="{{ old('ends_at') }}" type="date" class="form-control">
               </div>
@@ -47,11 +47,10 @@
           </div>
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Product Name</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.soldes.index.product') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <select name="product_id" id="" class="form-control">
-                  <option value="" disabled selected>Select Product</option>
-
+                  <option value="" disabled selected>{{ __('messages.admin.soldes.index.select_product') }}</option>
                   @foreach ($viewData['products'] as $product)
                     <option value="{{ $product->id }}">{{ $product->name }}</option>
                   @endforeach
@@ -61,13 +60,12 @@
           </div>
         </div>
         <div class="row">
-
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Category Name</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.soldes.index.category') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <select name="category_id" id="" class="form-control">
-                  <option value="" disabled selected>Select Category</option>
+                  <option value="" disabled selected>{{ __('messages.admin.soldes.index.select_category') }}</option>
                   @foreach ($viewData['categories'] as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                   @endforeach
@@ -76,46 +74,27 @@
             </div>
           </div>
         </div>
-
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">{{ __('messages.admin.soldes.index.btn_submit') }}</button>
       </form>
     </div>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <div class="card mb-4">
     <div class="card-header">
-      Manage Soldes
+      {{ __('messages.admin.soldes.index.manage_title') }}
     </div>
     <div class="card-body">
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Product</th>
-            <th scope="col">Category</th>
-            <th scope="col">Discount (%)</th>
-            <th scope="col">Start Date</th>
-            <th scope="col">End Date</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.id') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.product') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.category') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.discount') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.start') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.end') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.edit') }}</th>
+            <th scope="col">{{ __('messages.admin.soldes.index.table.delete') }}</th>
           </tr>
         </thead>
         <tbody>

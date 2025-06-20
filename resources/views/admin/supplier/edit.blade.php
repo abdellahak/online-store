@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mb-4">
   <div class="card-header">
-    Edit Supplier
+    {{__('messages.admin.suppliers.edit.title')}}
   </div>
   <div class="card-body">
     @if($errors->any())
@@ -20,25 +20,25 @@
       <div class="row">
         <div class="col">
           <div class="mb-3 row">
-            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Raison Sociale:</label>
+            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.edit.raison_social')}}:</label>
             <div class="col-lg-10 col-md-6 col-sm-12">
               <input name="raison_sociale" value="{{ $viewData['supplier']->raison_sociale }}" type="text" class="form-control">
             </div>
           </div>
           <div class="mb-3 row">
-            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Adresse:</label>
+            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.edit.address')}}:</label>
             <div class="col-lg-10 col-md-6 col-sm-12">
               <input name="adresse" value="{{ $viewData['supplier']->adresse }}" type="text" class="form-control">
             </div>
           </div>
           <div class="mb-3 row">
-            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Téléphone:</label>
+            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.edit.telephone')}}:</label>
             <div class="col-lg-10 col-md-6 col-sm-12">
               <input name="tele" value="{{ $viewData['supplier']->tele }}" type="text" class="form-control">
             </div>
           </div>
           <div class="mb-3 row">
-            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Email:</label>
+            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.edit.email')}}:</label>
             <div class="col-lg-10 col-md-6 col-sm-12">
               <input name="email" value="{{ $viewData['supplier']->email }}" type="email" class="form-control">
             </div>
@@ -46,10 +46,10 @@
         </div>
       </div>
       <div class="mb-3">
-        <label class="form-label">Description</label>
+        <label class="form-label">{{__('messages.admin.suppliers.edit.description')}}</label>
         <textarea class="form-control" name="description" rows="3">{{ $viewData['supplier']->description }}</textarea>
       </div>
-      <button type="submit" class="btn btn-primary">Edit</button>
+      <button type="submit" class="btn btn-primary">{{__('messages.admin.suppliers.edit.btn')}}</button>
     </form>
   </div>
 </div>

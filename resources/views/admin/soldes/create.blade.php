@@ -13,6 +13,8 @@
                 </tr>
             </thead>
             <tbody>
+               
+                
                 @foreach($soldes as $solde)
                     <tr>
                         <td>{{ $solde->id }}</td>

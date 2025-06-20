@@ -3,7 +3,7 @@
 @section('content')
   <div class="card mb-4">
     <div class="card-header">
-      Create Suppliers
+      {{__('messages.admin.suppliers.create.title')}}
     </div>
     <div class="card-body">
       @if ($errors->any())
@@ -19,25 +19,25 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Raison Sociale:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.create.raison_social')}}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="raison_sociale" value="{{ old('raison_sociale') }}" type="text" class="form-control">
               </div>
             </div>
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Adresse:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.create.address')}}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="adresse" value="{{ old('adresse') }}" type="text" class="form-control">
               </div>
             </div>
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Téléphone:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.create.telephone')}}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="tele" value="{{ old('tele') }}" type="text" class="form-control">
               </div>
             </div>
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Email:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.suppliers.create.email')}}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="email" value="{{ old('email') }}" type="email" class="form-control">
               </div>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Description</label>
+          <label class="form-label">{{__('messages.admin.suppliers.create.description')}}</label>
           <textarea class="form-control" name="description" rows="3">{{ old('description') }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -63,13 +63,13 @@
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Raison Sociale</th>
-            <th scope="col">Adresse</th>
-            <th scope="col">Téléphone</th>
-            <th scope="col">Email</th>
-            <th scope="col">Description</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.raison_social')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.address')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.telephone')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.email')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.description')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.btn_up')}}</th>
+            <th scope="col">{{__('messages.admin.suppliers.create.btn_de')}}</th>
           </tr>
         </thead>
         <tbody>

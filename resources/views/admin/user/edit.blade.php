@@ -3,7 +3,7 @@
 @section('content')
   <div class="card mb-4">
     <div class="card-header">
-      Edit User
+      {{ __('messages.admin.users.edit_title') }}
     </div>
     <div class="card-body">
       @if (session('success'))
@@ -26,7 +26,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Name:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.name') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="name" value="{{ old('name', $viewData['user']->getName()) }}" type="text"
                   class="form-control">
@@ -35,7 +35,7 @@
           </div>
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Email:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.email') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="email" value="{{ old('email', $viewData['user']->getEmail()) }}" type="email"
                   class="form-control">
@@ -46,16 +46,16 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Password:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.password') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="password" type="password" class="form-control">
-                <small class="form-text text-muted">Leave blank to keep current password.</small>
+                <small class="form-text text-muted">{{ __('messages.admin.users.form.leave_blank') }}</small>
               </div>
             </div>
           </div>
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Confirm Password:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.password_confirmation') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="password_confirmation" type="password" class="form-control">
               </div>
@@ -65,7 +65,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Balance:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.balance') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="balance" value="{{ old('balance', $viewData['user']->getBalance()) }}" type="number"
                   class="form-control">
@@ -74,13 +74,11 @@
           </div>
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Role:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.users.form.role') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <select name="role" id="roleSelect" class="form-control">
-                  <option value="client" {{ old('role', $viewData['user']->getRole()) == 'client' ? 'selected' : '' }}>
-                    Client</option>
-                  <option value="admin" {{ old('role', $viewData['user']->getRole()) == 'admin' ? 'selected' : '' }}>
-                    Admin</option>
+                  <option value="client" {{ old('role', $viewData['user']->getRole()) == 'client' ? 'selected' : '' }}>{{ __('messages.admin.users.table.role') }}</option>
+                  <option value="admin" {{ old('role', $viewData['user']->getRole()) == 'admin' ? 'selected' : '' }}>{{ __('messages.admin.users.table.super_admin') }}</option>
                 </select>
               </div>
             </div>
@@ -94,14 +92,14 @@
                   <input type="checkbox" name="is_super_admin" value="1" id="isSuperAdminCheckbox"
                     {{ old('is_super_admin', $viewData['user']->getIsSuperAdmin()) ? 'checked' : '' }}
                     class="form-check-input" role="switch">
-                  <label class="form-check-label" for="isSuperAdminCheckbox">Is Super Admin?</label>
+                  <label class="form-check-label" for="isSuperAdminCheckbox">{{ __('messages.admin.users.form.is_super_admin') }}</label>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-        <a href="{{ route('admin.user.index') }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">{{ __('messages.admin.users.form.update') }}</button>
+        <a href="{{ route('admin.user.index') }}" class="btn btn-secondary">{{ __('messages.admin.users.form.cancel') }}</a>
       </form>
     </div>
   </div>

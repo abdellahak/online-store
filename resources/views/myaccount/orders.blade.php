@@ -8,15 +8,15 @@
     Order #{{ $order->getId() }}
   </div>
   <div class="card-body">
-    <b>Date:</b> {{ $order->getCreatedAt() }}<br />
-    <b>Total:</b> ${{ $order->getTotal() }}<br />
+    <b>{{ __('messages.admin.product.index.orders.date') }}:</b> {{ $order->getCreatedAt() }}<br />
+    <b>{{ __('messages.admin.product.index.orders.total') }}:</b> ${{ $order->getTotal() }}<br />
     <table class="table table-bordered table-striped text-center mt-3">
       <thead>
         <tr>
-          <th scope="col">Item ID</th>
-          <th scope="col">Product Name</th>
-          <th scope="col">Price</th>
-          <th scope="col">Quantity</th>
+          <th scope="col">{{ __('messages.admin.product.index.orders.id') }}</th>
+          <th scope="col">{{ __('messages.admin.product.index.orders.name') }}</th>
+          <th scope="col">{{ __('messages.admin.product.index.orders.price') }}</th>
+          <th scope="col">{{ __('messages.admin.product.index.orders.quantity') }}</th>
         </tr>
       </thead>
       <tbody>

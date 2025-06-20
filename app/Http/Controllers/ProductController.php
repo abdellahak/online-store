@@ -11,8 +11,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $viewData = [];
-        $viewData["title"] = "Products - Online Store";
-        $viewData["subtitle"] =  "List of products";
+        $viewData["title"] = __('messages.products.shared.title');
+        $viewData["subtitle"] =  __('messages.products.shared.subtitle');
 
         $productsQuery = Product::query();
 

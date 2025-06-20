@@ -1,11 +1,9 @@
 @extends('layouts.admin')
-@section('title', 'Edit Solde')
+@section('title', __('messages.admin.soldes.edit.title'))
 @section('content')
-
 <div class="card mb-4">
-  <div class="card-header">Edit Solde</div>
+  <div class="card-header">{{ __('messages.admin.soldes.edit.title') }}</div>
   <div class="card-body">
-
     @if ($errors->any())
       <ul class="alert alert-danger list-unstyled">
         @foreach ($errors->all() as $error)
@@ -13,35 +11,25 @@
         @endforeach
       </ul>
     @endif
-
     <form method="POST" action="{{ route('admin.soldes.update', $solde->id) }}">
       @csrf
       @method('PUT')
-
       <div class="mb-3">
-        <label>Taux (%)</label>
+        <label>{{ __('messages.admin.soldes.edit.value') }}</label>
         <input type="number" name="value" value="{{ old('value', $solde->value) }}" class="form-control">
       </div>
-
       <div class="mb-3">
-        <label>Date début</label>
-
-
-    
-
-
+        <label>{{ __('messages.admin.soldes.edit.starts_at') }}</label>
         <input type="date" name="starts_at" value="{{ old('starts_at', $solde->starts_at) }}" class="form-control">
-    </div>
-
+      </div>
       <div class="mb-3">
-        <label>Date fin</label>
+        <label>{{ __('messages.admin.soldes.edit.ends_at') }}</label>
         <input type="date" name="ends_at" value="{{ old('ends_at', $solde->ends_at) }}" class="form-control">
-    </div>
-
+      </div>
       <div class="mb-3">
-        <label>Produit</label>
+        <label>{{ __('messages.admin.soldes.edit.product') }}</label>
         <select name="product_id" class="form-control">
-          <option value="">-- Aucun --</option>
+          <option value="">{{ __('messages.admin.soldes.edit.select_product') }}</option>
           @foreach ($products as $product)
             <option value="{{ $product->id }}" {{ $solde->product_id == $product->id ? 'selected' : '' }}>
               {{ $product->name }}
@@ -49,11 +37,10 @@
           @endforeach
         </select>
       </div>
-
       <div class="mb-3">
-        <label>Catégorie</label>
+        <label>{{ __('messages.admin.soldes.edit.category') }}</label>
         <select name="category_id" class="form-control">
-          <option value="">-- Aucune --</option>
+          <option value="">{{ __('messages.admin.soldes.edit.select_category') }}</option>
           @foreach ($categories as $category)
             <option value="{{ $category->id }}" {{ $solde->category_id == $category->id ? 'selected' : '' }}>
               {{ $category->name }}
@@ -61,10 +48,8 @@
           @endforeach
         </select>
       </div>
-
-      <button type="submit" class="btn btn-success">Mettre à jour</button>
+      <button type="submit" class="btn btn-success">{{ __('messages.admin.soldes.edit.btn') }}</button>
     </form>
   </div>
 </div>
-
 @endsection
