@@ -27,15 +27,16 @@ services:
 
 # Before script - Install dependencies and set up environment
 before_script:
-  # Update system packages
-  - apt-get update -qq && apt-get install -y -qq git curl zip unzip
+  # Update system packages and install dependencies
+  - apt-get update -qq && apt-get install -y -qq git curl zip unzip libzip-dev
 
   # Install PHP extensions
-  - docker-php-ext-install pdo pdo_mysql
+  - docker-php-ext-install pdo pdo_mysql zip
 
   # Install Composer
   - curl -sS https://getcomposer.org/installer | php
   - mv composer.phar /usr/local/bin/composer
+  - composer --version
 
   # Set up environment
   - cp .env.example .env
@@ -46,14 +47,15 @@ before_script:
   - sed -i "s/DB_PASSWORD=/DB_PASSWORD=laravel/" .env
   - sed -i "s/APP_ENV=local/APP_ENV=testing/" .env
 
-  # Install Composer dependencies
-  - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+  # Install Composer dependencies with more verbose output
+  - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
 
   # Generate application key
   - php artisan key:generate
 
-  # Wait for MySQL to be ready
-  - sleep 10
+  # Wait for MySQL to be ready and test connection
+  - sleep 15
+  - php artisan config:clear
 
 # Job: Install Dependencies
 install_dependencies:
@@ -134,7 +136,9 @@ artisan_commands:
     - install_dependencies
   script:
     # Run database migrations
-    - php artisan migrate --force    # Test some basic artisan commands
+    - php artisan migrate --force
+    
+    # Test some basic artisan commands
     - php artisan route:list
     - php artisan config:cache
     - php artisan view:cache
