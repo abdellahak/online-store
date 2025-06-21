@@ -1,91 +1,126 @@
+# GitLab CI/CD configuration for Laravel project
+image: php:8.2-fpm
+
+# Cache dependencies to speed up builds
+cache:
+  paths:
+    - vendor/
+    - node_modules/
+
+# Define stages
 stages:
   - build
   - test
 
+# Variables
 variables:
   MYSQL_DATABASE: laravel_test
   MYSQL_ROOT_PASSWORD: root
   MYSQL_USER: laravel
   MYSQL_PASSWORD: laravel
+  DB_HOST: mysql
+  DB_DATABASE: laravel_test
+  DB_USERNAME: laravel
+  DB_PASSWORD: laravel
 
-# Build job
+# Services (for testing with database)
+services:
+  - mysql:8.0
+
+# Before script - install dependencies and setup environment
+before_script:
+  # Install system dependencies
+  - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
+  
+  # Install PHP extensions
+  - docker-php-ext-install pdo_mysql zip bcmath gd
+  
+  # Install Composer
+  - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  
+  # Install Node.js and npm (for frontend assets)
+  - curl -sL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs
+
+# Build stage
 build:
   stage: build
-  image: php:8.2-fpm
-  
-  before_script:
-    # Install system dependencies
-    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
-    
-    # Install PHP extensions (including GD for phpoffice/phpspreadsheet)
-    - docker-php-ext-configure gd --with-freetype --with-jpeg
-    - docker-php-ext-install pdo_mysql zip bcmath gd
-    
-    # Install Composer
-    - curl -sS https://getcomposer.org/installer | php
-    - mv composer.phar /usr/local/bin/composer
-    
   script:
-    # Install dependencies
-    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    # Install PHP dependencies
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
     
+    # Install Node.js dependencies (if you have frontend assets)
+    - npm install
+    
+    # Build frontend assets
+    - npm run build
+    
+    # Copy environment file
+    - cp .env.example .env
+    
+    # Generate application key
+    - php artisan key:generate
+    
+    # Cache configuration
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
+  
   artifacts:
     paths:
       - vendor/
+      - node_modules/
+      - public/build/
+      - bootstrap/cache/
     expire_in: 1 hour
 
-# Test job
+# Test stage
 test:
   stage: test
-  image: php:8.2-fpm
-  
-  services:
-    - mysql:8.0
-  
-  variables:
-    DB_HOST: mysql
-    DB_DATABASE: laravel_test
-    DB_USERNAME: laravel
-    DB_PASSWORD: laravel
-  before_script:
-    # Install system dependencies
-    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
-    
-    # Install PHP extensions (including GD for phpoffice/phpspreadsheet and xdebug for coverage)
-    - docker-php-ext-configure gd --with-freetype --with-jpeg    - docker-php-ext-install pdo_mysql zip bcmath gd
-    - pecl install xdebug
-    - docker-php-ext-enable xdebug
-    - echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-      # Install Composer
-    - curl -sS https://getcomposer.org/installer | php
-    - mv composer.phar /usr/local/bin/composer
-    
-    # Set up environment
-    - cp .env.example .env
-    - php artisan key:generate
-    - php artisan config:clear
-    - php artisan cache:clear
-    
-    # Refresh autoloader to ensure all models are properly loaded
-    - composer dump-autoload
-    
-    # Wait for MySQL to be ready and run migrations
-    - php artisan migrate --force  script
-    - XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.xml
-    
-    # Optional: Run PHP CodeSniffer for code quality (allow failure)
-    - vendor/bin/phpcs --standard=phpcs.xml app/ || true
-    
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
-    paths:
-      - storage/logs/
-      - coverage.xml
-    expire_in: 1 week
-    when: always
-    
   dependencies:
     - build
+  script:
+    # Wait for MySQL to be ready
+    - sleep 10
+    
+    # Copy environment file for testing
+    - cp .env.example .env
+    - php artisan key:generate
+    
+    # Set testing environment variables
+    - echo "APP_ENV=testing" >> .env
+    - echo "DB_CONNECTION=mysql" >> .env
+    - echo "DB_HOST=$DB_HOST" >> .env
+    - echo "DB_PORT=3306" >> .env
+    - echo "DB_DATABASE=$DB_DATABASE" >> .env
+    - echo "DB_USERNAME=$DB_USERNAME" >> .env
+    - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+    
+    # Run database migrations
+    - php artisan migrate --force
+    
+    # Seed database (optional)
+    # - php artisan db:seed --force
+    
+    # Run PHPUnit tests
+    - php artisan test --coverage --coverage-html=coverage/
+    
+    # Or run specific test suites separately (optional)
+    # - php artisan test tests/Unit --testdox
+    # - php artisan test tests/Feature --testdox
+    
+    # Run additional checks (optional)
+    # - vendor/bin/phpstan analyse
+    # - vendor/bin/php-cs-fixer fix --dry-run --diff
+  
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  
+  artifacts:
+    paths:
+      - coverage/
+    reports:
+      junit: tests/results.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: tests/coverage.xml
+    expire_in: 1 week
