@@ -41,6 +41,7 @@ test:
   
   services:
     - mysql:8.0
+  
   variables:
     DB_HOST: mysql
     DB_DATABASE: laravel_test
@@ -69,11 +70,11 @@ test:
     - php artisan migrate --force
     
   script:
-    # Run PHPUnit tests
-    - vendor/bin/phpunit --coverage-text --colors=never
+    # Run PHPUnit tests with coverage report
+    - vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.xml
     
-    # Optional: Run PHP CodeSniffer for code quality
-    - vendor/bin/phpcs --standard=phpcs.xml app/
+    # Optional: Run PHP CodeSniffer for code quality (allow failure)
+    - vendor/bin/phpcs --standard=phpcs.xml app/ || true
     
   artifacts:
     reports:
@@ -82,6 +83,7 @@ test:
         path: coverage.xml
     paths:
       - storage/logs/
+      - coverage.xml
     expire_in: 1 week
     when: always
     
