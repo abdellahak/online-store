@@ -1,83 +1,62 @@
-# GitLab CI/CD Configuration for Laravel Project
-
-# Define stages
 stages:
-  - build
   - test
 
-build:
-  stage: build
-  image: php:8.2
-  before_script:
-    - apt-get update -yqq
-    - apt-get install -yqq git unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev curl
-    - docker-php-ext-configure gd --with-jpeg --with-freetype
-    - docker-php-ext-install zip pdo_mysql gd
-    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-  script:
-    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
-    - cp /usr/local/bin/composer ./composer.phar       
-    - apt-get install -y nodejs npm
-    - npm ci
-    - npm run build
-  artifacts:
-    paths:
-      - vendor/
-      - node_modules/
-      - public/build/
-      - composer.phar
+variables:
+  MYSQL_DATABASE: laravel_test
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_USER: laravel
+  MYSQL_PASSWORD: laravel
 
+# Test job
 test:
   stage: test
-  image: php:8.2
+  image: php:8.2-fpm
+  
   services:
-    - name: mysql:5.7
-      alias: mysql
+    - mysql:8.0
+  
   variables:
-    MYSQL_DATABASE: OnlineStore
-    MYSQL_ROOT_PASSWORD: root
     DB_HOST: mysql
-    DB_PORT: 3306
-    DB_DATABASE: OnlineStore
-    DB_USERNAME: root
-    DB_PASSWORD: root
-    GIT_STRATEGY: clone
-  needs:
-    - job: build
-      artifacts: true
+    DB_DATABASE: laravel_test
+    DB_USERNAME: laravel
+    DB_PASSWORD: laravel
+    
   before_script:
-    - apt-get update && apt-get install -y default-mysql-client libzip-dev curl libpng-dev libjpeg62-turbo-dev libfreetype6-dev
-    - cp composer.phar /usr/local/bin/composer
-    - chmod +x /usr/local/bin/composer
-    - docker-php-ext-configure gd --with-jpeg --with-freetype
-    - docker-php-ext-install pdo_mysql gd
+    # Install system dependencies
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
+    
+    # Install PHP extensions
+    - docker-php-ext-install pdo_mysql zip bcmath
+    
+    # Install Composer
+    - curl -sS https://getcomposer.org/installer | php
+    - mv composer.phar /usr/local/bin/composer
+    
+    # Install dependencies
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    
+    # Set up environment
     - cp .env.example .env
-    - sed -i "s/DB_HOST=.*/DB_HOST=mysql/" .env
-    - sed -i "s/DB_DATABASE=.*/DB_DATABASE=OnlineStore/" .env
-    - sed -i "s/DB_USERNAME=.*/DB_USERNAME=root/" .env  
-    - sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=root/" .env
     - php artisan key:generate
     - php artisan config:clear
-    - php artisan route:clear
     - php artisan cache:clear
-    - php artisan view:clear
-    - composer dump-autoload
-    - |
-      max_tries=30
-      count=0
-      until mysql -h mysql -u root -proot -e "SELECT 1" &> /dev/null
-      do
-        echo "Waiting for MySQL to be ready..."
-        sleep 2
-        count=$((count+1))
-        if [ $count -gt $max_tries ]; then
-          echo "MySQL connection timed out"
-          exit 1
-        fi
-      done
-      echo "MySQL is ready!"
+    
+    # Wait for MySQL to be ready and run migrations
+    - php artisan migrate --force
+    
   script:
-    - echo "Listing controller files..."
-    - find app/Http/Controllers -name "*.php" | sort
-    - php artisan migrate --force --seed --no-interaction
-    - php artisan test
+    # Run PHPUnit tests
+    - vendor/bin/phpunit --coverage-text --colors=never
+    
+    # Optional: Run PHP CodeSniffer for code quality
+    - vendor/bin/phpcs --standard=phpcs.xml app/
+    
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - storage/logs/
+    expire_in: 1 week
+    when: always
