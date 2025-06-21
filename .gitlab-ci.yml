@@ -1,4 +1,5 @@
 stages:
+  - build
   - test
 
 variables:
@@ -7,6 +8,32 @@ variables:
   MYSQL_USER: laravel
   MYSQL_PASSWORD: laravel
 
+# Build job
+build:
+  stage: build
+  image: php:8.2-fpm
+  
+  before_script:
+    # Install system dependencies
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
+    
+    # Install PHP extensions (including GD for phpoffice/phpspreadsheet)
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install pdo_mysql zip bcmath gd
+    
+    # Install Composer
+    - curl -sS https://getcomposer.org/installer | php
+    - mv composer.phar /usr/local/bin/composer
+    
+  script:
+    # Install dependencies
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+
 # Test job
 test:
   stage: test
@@ -14,8 +41,7 @@ test:
   
   services:
     - mysql:8.0
-  
-  variables:
+    variables:
     DB_HOST: mysql
     DB_DATABASE: laravel_test
     DB_USERNAME: laravel
@@ -25,15 +51,13 @@ test:
     # Install system dependencies
     - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
     
-    # Install PHP extensions
-    - docker-php-ext-install pdo_mysql zip bcmath
+    # Install PHP extensions (including GD for phpoffice/phpspreadsheet)
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install pdo_mysql zip bcmath gd
     
     # Install Composer
     - curl -sS https://getcomposer.org/installer | php
     - mv composer.phar /usr/local/bin/composer
-    
-    # Install dependencies
-    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
     
     # Set up environment
     - cp .env.example .env
@@ -60,3 +84,6 @@ test:
       - storage/logs/
     expire_in: 1 week
     when: always
+    
+  dependencies:
+    - build
