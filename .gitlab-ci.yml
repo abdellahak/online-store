@@ -1,0 +1,147 @@
+# GitLab CI/CD configuration for Laravel project
+image: php:8.2-fpm
+
+# Cache dependencies to speed up builds
+cache:
+  paths:
+    - vendor/
+    - node_modules/
+
+# Define stages
+stages:
+  - build
+  - test
+
+# Variables
+variables:
+  MYSQL_DATABASE: laravel_test
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_USER: laravel
+  MYSQL_PASSWORD: laravel
+  DB_HOST: mysql
+  DB_DATABASE: laravel_test
+  DB_USERNAME: laravel
+  DB_PASSWORD: laravel
+
+# Services (for testing with database)
+services:
+  - mysql:8.0
+
+# Before script - install dependencies and setup environment
+before_script:
+  # Install system dependencies
+  - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
+
+  # Install PHP extensions
+  - docker-php-ext-install pdo_mysql zip bcmath gd
+
+  # Install Xdebug for code coverage
+  - pecl install xdebug
+  - docker-php-ext-enable xdebug
+
+  # Configure Xdebug for coverage
+  - echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+  # Install Composer
+  - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+  # Install Node.js and npm (for frontend assets)
+  - curl -sL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs
+
+# Build stage
+build:
+  stage: build
+  script:
+    # Install PHP dependencies
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
+
+    # Fix any PSR-4 autoloading issues (case sensitivity)
+    - composer dump-autoload --optimize
+
+    # Install Node.js dependencies (if you have frontend assets)
+    - npm install
+
+    # Build frontend assets (check if build script exists)
+    - if npm run | grep -q "build"; then npm run build; else echo "No build script found, skipping frontend build"; fi
+
+    # Copy environment file
+    - cp .env.example .env
+
+    # Generate application key
+    - php artisan key:generate
+
+    # Cache configuration
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
+
+  artifacts:
+    paths:
+      - vendor/
+      - node_modules/
+      - public/build/
+      - public/css/
+      - public/js/
+      - bootstrap/cache/
+    expire_in: 1 hour
+
+# Test stage
+test:
+  stage: test
+  dependencies:
+    - build
+  script:
+    # Wait for MySQL to be ready
+    - sleep 20
+
+    # Copy environment file for testing
+    - cp .env.example .env
+
+    # Generate application key with force flag
+    - php artisan key:generate --force
+
+    # Set testing environment variables
+    - echo "APP_ENV=testing" >> .env
+    - echo "DB_CONNECTION=mysql" >> .env
+    - echo "DB_HOST=$DB_HOST" >> .env
+    - echo "DB_PORT=3306" >> .env
+    - echo "DB_DATABASE=$DB_DATABASE" >> .env
+    - echo "DB_USERNAME=$DB_USERNAME" >> .env
+    - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+    - echo "APP_DEBUG=true" >> .env
+
+    # Clear and regenerate all caches
+    - php artisan config:clear
+    - php artisan cache:clear
+    - php artisan route:clear
+    - php artisan view:clear
+
+    # Check Models directory for case sensitivity issues
+    - echo "Contents of app/Models directory:"
+    - ls -la app/Models/
+
+    # Regenerate autoload files
+    - composer dump-autoload --optimize
+
+    # Run database migrations with fresh start
+    - php artisan migrate:fresh --force
+
+    # Set Xdebug mode for coverage
+    - export XDEBUG_MODE=coverage
+
+    # Run PHPUnit tests with coverage
+    - php artisan test --coverage-text --coverage-clover=coverage.xml
+
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+
+  artifacts:
+    paths:
+      - coverage.xml
+      - coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    expire_in: 1 week
+    when: always

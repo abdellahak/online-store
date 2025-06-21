@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Solde;
 use App\Models\Product;
-use App\Models\category;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -13,21 +13,21 @@ class AdminSoldeController extends Controller
     public function index()
     {
         $viewData = [];
-        $viewData["soldes"]=Solde::with(["product","category"])->get();
+        $viewData["soldes"] = Solde::with(["product", "category"])->get();
 
-        $viewData["title"]=" list of Soldes";
-        $viewData["categories"] = category::all();
+        $viewData["title"] = " list of Soldes";
+        $viewData["categories"] = Category::all();
         $viewData["products"] = Product::all();
-        $viewData["soldes"] =$viewData["soldes"]->map(function ($solde) {
+        $viewData["soldes"] = $viewData["soldes"]->map(function ($solde) {
             $solde->starts_at = \Carbon\Carbon::parse($solde->starts_at)->format('Y-m-d');
             $solde->ends_at = \Carbon\Carbon::parse($solde->ends_at)->format('Y-m-d');
-            
+
             return $solde;
         });
-      return view('admin.soldes.index', compact('viewData'));
+        return view('admin.soldes.index', compact('viewData'));
     }
 
-   
+
 
 
 
@@ -41,28 +41,27 @@ class AdminSoldeController extends Controller
             'ends_at' => 'required|date|after:starts_at',
         ]);
         Solde::create($request->all());
-    
 
 
-      
-     
 
-      
+
+
+
+
 
         return redirect()->route('admin.soldes.index')->with('success', 'Solde created successfully!');
-
     }
 
-   
+
     public function edit($id)
     {
         $solde = Solde::findOrFail($id);
         $products = Product::all();
         $categories = Category::all();
-    
+
         $solde->starts_at = \Carbon\Carbon::parse($solde->starts_at)->format('Y-m-d');
         $solde->ends_at = \Carbon\Carbon::parse($solde->ends_at)->format('Y-m-d');
-    
+
 
 
         return view('admin.soldes.edit', [
@@ -81,36 +80,36 @@ class AdminSoldeController extends Controller
             'starts_at' => 'required|date',
             'ends_at' => 'required|date|after:starts_at',
         ]);
-    
+
         $solde = Solde::findOrFail($id);
         $solde->update($request->all());
-    
+
         return redirect()->route('admin.soldes.index')->with('success', 'Solde updated successfully!');
     }
-    
 
-    public function destroy(Request $request,$id)
+
+    public function destroy(Request $request, $id)
     {
-        
-        
+
+
         $solde = Solde::findOrFail($id);
 
-   
+
         if ($solde->product_id) {
-            $product = $solde->product; 
+            $product = $solde->product;
             $discountValue = $solde->value;
             $currentPrice = $product->getPrice();
             $originalPrice = $currentPrice / (1 - $discountValue / 100);
-            
+
             $product->setPrice($originalPrice);
             $product->save();
         }
 
-        
-        if ($solde->category_id) {
-            $category = $solde->category; 
 
-            foreach ($category->products as $product) { 
+        if ($solde->category_id) {
+            $category = $solde->category;
+
+            foreach ($category->products as $product) {
                 $discountValue = $solde->value;
                 $currentPrice = $product->getPrice();
                 $originalPrice = $currentPrice / (1 - $discountValue / 100);
@@ -119,14 +118,7 @@ class AdminSoldeController extends Controller
                 $product->save();
             }
         }
-        $solde->delete(); 
+        $solde->delete();
         return redirect()->route('admin.soldes.index')->with('success', 'Solde deleted successfully!');
     }
-
-
-
-
-
-
- 
 }

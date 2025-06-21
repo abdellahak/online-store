@@ -9,7 +9,7 @@ class Solde extends Model
 {
     use HasFactory;
     protected $fillable = [
-     
+
         'value',
         'product_id',
         'category_id',
@@ -17,24 +17,14 @@ class Solde extends Model
         'ends_at'
     ];
 
-  
+
 
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-
     public function category()
     {
-        return $this->belongsTo(category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
-
-
-
-
-
-
-  
-
-   
 }
