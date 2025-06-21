@@ -49,11 +49,14 @@ build:
     # Install PHP dependencies
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
     
+    # Fix any PSR-4 autoloading issues (case sensitivity)
+    - composer dump-autoload --optimize
+    
     # Install Node.js dependencies (if you have frontend assets)
     - npm install
     
-    # Build frontend assets
-    - npm run build
+    # Build frontend assets (check if build script exists)
+    - if npm run | grep -q "build"; then npm run build; else echo "No build script found, skipping frontend build"; fi
     
     # Copy environment file
     - cp .env.example .env
@@ -71,6 +74,8 @@ build:
       - vendor/
       - node_modules/
       - public/build/
+      - public/css/
+      - public/js/
       - bootstrap/cache/
     expire_in: 1 hour
 
