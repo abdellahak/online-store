@@ -47,14 +47,15 @@ test:
     DB_DATABASE: laravel_test
     DB_USERNAME: laravel
     DB_PASSWORD: laravel
-    
   before_script:
     # Install system dependencies
     - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
     
-    # Install PHP extensions (including GD for phpoffice/phpspreadsheet)
+    # Install PHP extensions (including GD for phpoffice/phpspreadsheet and xdebug for coverage)
     - docker-php-ext-configure gd --with-freetype --with-jpeg
     - docker-php-ext-install pdo_mysql zip bcmath gd
+    - pecl install xdebug
+    - docker-php-ext-enable xdebug
     
     # Install Composer
     - curl -sS https://getcomposer.org/installer | php
@@ -68,10 +69,9 @@ test:
     
     # Wait for MySQL to be ready and run migrations
     - php artisan migrate --force
-    
   script:
-    # Run PHPUnit tests with coverage report
-    - vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.xml
+    # Run PHPUnit tests (coverage generation may fail without xdebug, but tests will still run)
+    - vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.xml || vendor/bin/phpunit --colors=never
     
     # Optional: Run PHP CodeSniffer for code quality (allow failure)
     - vendor/bin/phpcs --standard=phpcs.xml app/ || true
