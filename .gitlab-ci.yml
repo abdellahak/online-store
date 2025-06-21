@@ -39,6 +39,9 @@ before_script:
   - pecl install xdebug
   - docker-php-ext-enable xdebug
   
+  # Configure Xdebug for coverage
+  - echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+  
   # Install Composer
   - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   
@@ -90,7 +93,7 @@ test:
     - build
   script:
     # Wait for MySQL to be ready
-    - sleep 10
+    - sleep 20
     
     # Copy environment file for testing
     - cp .env.example .env
@@ -106,27 +109,29 @@ test:
     - echo "DB_DATABASE=$DB_DATABASE" >> .env
     - echo "DB_USERNAME=$DB_USERNAME" >> .env
     - echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+    - echo "APP_DEBUG=true" >> .env
     
-    # Run database migrations
-    - php artisan migrate --force
+    # Clear and regenerate all caches
+    - php artisan config:clear
+    - php artisan cache:clear
+    - php artisan route:clear
+    - php artisan view:clear
     
-    # Seed database (optional)
-    # - php artisan db:seed --force
+    # Regenerate autoload files to ensure all classes are properly loaded
+    - composer dump-autoload --optimize
     
-    # Run PHPUnit tests (with and without coverage options)
-    - |
-      if php -m | grep -q xdebug; then
-        echo "Running tests with coverage..."
-        php artisan test --coverage-text --coverage-clover=coverage.xml
-      else
-        echo "Running tests without coverage (Xdebug not available)..."
-        php artisan test
-      fi
+    # Test database connection
+    - php artisan migrate:status || echo "Migration status check failed, continuing..."
     
-    # Run additional checks (optional)
-    # - vendor/bin/phpstan analyse
-    # - vendor/bin/php-cs-fixer fix --dry-run --diff
-  
+    # Run database migrations with fresh start
+    - php artisan migrate:fresh --force
+    
+    # Set Xdebug mode for coverage
+    - export XDEBUG_MODE=coverage
+    
+    # Run PHPUnit tests with coverage
+    - php artisan test --coverage-text --coverage-clover=coverage.xml
+    
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   
   artifacts:
