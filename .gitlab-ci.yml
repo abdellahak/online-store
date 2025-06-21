@@ -41,7 +41,7 @@ test:
   
   services:
     - mysql:8.0
-    variables:
+  variables:
     DB_HOST: mysql
     DB_DATABASE: laravel_test
     DB_USERNAME: laravel
