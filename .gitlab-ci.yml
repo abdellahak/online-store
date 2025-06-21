@@ -35,6 +35,10 @@ before_script:
   # Install PHP extensions
   - docker-php-ext-install pdo_mysql zip bcmath gd
   
+  # Install Xdebug for code coverage
+  - pecl install xdebug
+  - docker-php-ext-enable xdebug
+  
   # Install Composer
   - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   
@@ -90,7 +94,9 @@ test:
     
     # Copy environment file for testing
     - cp .env.example .env
-    - php artisan key:generate
+    
+    # Generate application key first
+    - php artisan key:generate --force
     
     # Set testing environment variables
     - echo "APP_ENV=testing" >> .env
@@ -107,12 +113,15 @@ test:
     # Seed database (optional)
     # - php artisan db:seed --force
     
-    # Run PHPUnit tests
-    - php artisan test --coverage --coverage-html=coverage/
-    
-    # Or run specific test suites separately (optional)
-    # - php artisan test tests/Unit --testdox
-    # - php artisan test tests/Feature --testdox
+    # Run PHPUnit tests (with and without coverage options)
+    - |
+      if php -m | grep -q xdebug; then
+        echo "Running tests with coverage..."
+        php artisan test --coverage-text --coverage-clover=coverage.xml
+      else
+        echo "Running tests without coverage (Xdebug not available)..."
+        php artisan test
+      fi
     
     # Run additional checks (optional)
     # - vendor/bin/phpstan analyse
@@ -122,10 +131,11 @@ test:
   
   artifacts:
     paths:
+      - coverage.xml
       - coverage/
     reports:
-      junit: tests/results.xml
       coverage_report:
         coverage_format: cobertura
-        path: tests/coverage.xml
+        path: coverage.xml
     expire_in: 1 week
+    when: always
