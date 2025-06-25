@@ -63,9 +63,6 @@ build:
       MAIL_MAILER=array
       EOF
     
-    # Dump autoload to ensure all classes are properly loaded
-    - composer dump-autoload --optimize
-    
     - echo "Build completed successfully"
   artifacts:
     paths:
@@ -87,24 +84,12 @@ test:
     # Install PHP extensions
     - docker-php-ext-install pdo_sqlite zip bcmath gd
   script:
-    # Debug: Check if Category model exists
-    - echo "Checking for Category model..."
-    - ls -la app/Models/
-    - test -f app/Models/Category.php && echo "Category.php exists" || echo "Category.php NOT found"
-    
-    # Debug: Check composer autoload
-    - echo "Checking composer autoload..."
-    - composer dump-autoload --optimize
-    
     # Clear caches
     - php artisan config:clear --env=testing
     - php artisan cache:clear --env=testing
     
     # Run database migrations
     - php artisan migrate --force --env=testing
-    
-    # Debug: Test if we can load the Category class
-    - php -r "require 'vendor/autoload.php'; echo class_exists('App\\Models\\Category') ? 'Category class found' : 'Category class NOT found'; echo PHP_EOL;"
     
     # Run all tests
     - vendor/bin/phpunit --testdox
