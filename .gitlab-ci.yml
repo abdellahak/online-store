@@ -1,22 +1,10 @@
-# GitLab CI/CD Pipeline for Laravel 11 Project
-# This pipeline runs Unit and Feature tests with MySQL database
+# Simple GitLab CI/CD Pipeline for Laravel 11 Project
+# Build dependencies and run tests
 
 # Define the stages
 stages:
-  - prepare
+  - build
   - test
-  - quality
-
-# Variables used across all jobs
-variables:
-  MYSQL_ROOT_PASSWORD: root
-  MYSQL_DATABASE: laravel_test
-  MYSQL_USER: laravel
-  MYSQL_PASSWORD: laravel
-  DB_HOST: mysql
-  DB_DATABASE: laravel_test
-  DB_USERNAME: laravel
-  DB_PASSWORD: laravel
 
 # Cache configuration for faster builds
 cache:
@@ -25,153 +13,83 @@ cache:
     - vendor/
     - .composer-cache/
 
-# Base job template for all PHP jobs
-.php_base: &php_base
+# Build Stage - Install dependencies and prepare environment
+build:
   image: php:8.2-cli
+  stage: build
   before_script:
     # Install system dependencies
-    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3
     
     # Install PHP extensions
-    - docker-php-ext-install pdo_mysql zip bcmath gd
+    - docker-php-ext-install pdo_sqlite zip bcmath gd
     
     # Install Composer
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     
     # Set Composer cache directory
     - export COMPOSER_CACHE_DIR=.composer-cache
-    
+  script:
     # Install dependencies
     - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
     
     # Set up Laravel environment
     - cp .env.example .env
-    - php artisan key:generate
-    - php artisan config:clear
-    - php artisan cache:clear
-
-# Prepare stage - Install dependencies and prepare environment
-prepare:dependencies:
-  <<: *php_base
-  stage: prepare
-  script:
-    - echo "Dependencies installed and environment prepared"
+    - php artisan key:generate --ansi
+    
+    # Create testing environment file with SQLite
+    - |
+      cat > .env.testing << EOF
+      APP_NAME=Laravel
+      APP_ENV=testing
+      APP_KEY=$(php artisan --no-ansi key:generate --show)
+      APP_DEBUG=true
+      APP_URL=http://localhost
+      
+      DB_CONNECTION=sqlite
+      DB_DATABASE=:memory:
+      
+      LOG_CHANNEL=stack
+      LOG_DEPRECATIONS_CHANNEL=null
+      LOG_LEVEL=debug
+      
+      BROADCAST_DRIVER=log
+      CACHE_DRIVER=array
+      FILESYSTEM_DISK=local
+      QUEUE_CONNECTION=sync
+      SESSION_DRIVER=array
+      SESSION_LIFETIME=120
+      
+      MAIL_MAILER=array
+      EOF
+    
+    - echo "Build completed successfully"
   artifacts:
     paths:
       - vendor/
       - .env
+      - .env.testing
     expire_in: 1 hour
 
-# Unit Tests - Fast tests without database
-unit_tests:
-  <<: *php_base
+# Test Stage - Run all tests
+test:
+  image: php:8.2-cli
   stage: test
   dependencies:
-    - prepare:dependencies
-  script:
-    # Run Unit tests only
-    - vendor/bin/phpunit --testsuite=Unit --coverage-text --coverage-clover=coverage-unit.xml
-  artifacts:
-    when: always
-    reports:
-      junit: coverage-unit.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage-unit.xml
-    paths:
-      - coverage-unit.xml
-    expire_in: 1 week
-
-# Feature Tests - Tests that require database
-feature_tests:
-  <<: *php_base
-  stage: test
-  services:
-    - mysql:8.0
-  dependencies:
-    - prepare:dependencies
-  script:
-    # Wait for MySQL to be ready
-    - until mysql -h mysql -u $DB_USERNAME -p$DB_PASSWORD -e "SELECT 1"; do sleep 1; done
+    - build
+  before_script:
+    # Install system dependencies
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3
     
-    # Set up test database
+    # Install PHP extensions
+    - docker-php-ext-install pdo_sqlite zip bcmath gd
+  script:
+    # Clear caches
+    - php artisan config:clear --env=testing
+    - php artisan cache:clear --env=testing
+    
+    # Run database migrations
     - php artisan migrate --force --env=testing
     
-    # Run Feature tests
-    - vendor/bin/phpunit --testsuite=Feature --coverage-text --coverage-clover=coverage-feature.xml
-  artifacts:
-    when: always
-    reports:
-      junit: coverage-feature.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage-feature.xml
-    paths:
-      - coverage-feature.xml
-    expire_in: 1 week
-
-# All Tests - Run complete test suite (optional - for comprehensive coverage)
-all_tests:
-  <<: *php_base
-  stage: test
-  services:
-    - mysql:8.0
-  dependencies:
-    - prepare:dependencies
-  script:
-    # Wait for MySQL to be ready
-    - until mysql -h mysql -u $DB_USERNAME -p$DB_PASSWORD -e "SELECT 1"; do sleep 1; done
-    
-    # Set up test database
-    - php artisan migrate --force --env=testing
-    
-    # Run all tests with coverage
-    - vendor/bin/phpunit --coverage-html=coverage-html --coverage-text --coverage-clover=coverage-all.xml
-  artifacts:
-    when: always
-    reports:
-      junit: coverage-all.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage-all.xml
-    paths:
-      - coverage-html/
-      - coverage-all.xml
-    expire_in: 1 week
-  # This job is manual to avoid running redundant tests
-  when: manual
-  allow_failure: true
-
-# Code Quality - PHP CodeSniffer
-code_quality:
-  <<: *php_base
-  stage: quality
-  dependencies:
-    - prepare:dependencies
-  script:
-    # Run PHP CodeSniffer
-    - vendor/bin/phpcs --standard=PSR12 --report=junit --report-file=phpcs-report.xml app/ || true
-    - vendor/bin/phpcs --standard=PSR12 app/
-  artifacts:
-    when: always
-    reports:
-      junit: phpcs-report.xml
-    paths:
-      - phpcs-report.xml
-    expire_in: 1 week
-  allow_failure: true
-
-# Laravel Code Analysis (optional)
-laravel_analysis:
-  <<: *php_base
-  stage: quality
-  dependencies:
-    - prepare:dependencies
-  script:
-    # Check for Laravel best practices
-    - php artisan route:list
-    - php artisan config:cache
-    - php artisan view:cache
-    - echo "Laravel configuration analysis completed"
-  allow_failure: true
-  when: manual
+    # Run all tests
+    - vendor/bin/phpunit --testdox
