@@ -29,12 +29,19 @@
                   @method('PUT')
                   <div class="mb-3">
                     <select name="status" class="form-control" onchange="this.form.submit()">
-                      <option value="{{ __('messages.admin.orders.status_options.packed') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.packed') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.packed') }}</option>
-                      <option value="{{ __('messages.admin.orders.status_options.sent') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.sent') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.sent') }}</option>
-                      <option value="{{ __('messages.admin.orders.status_options.on_way') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.on_way') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.on_way') }}</option>
-                      <option value="{{ __('messages.admin.orders.status_options.received') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.received') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.received') }}</option>
-                      <option value="{{ __('messages.admin.orders.status_options.returned') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.returned') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.returned') }}</option>
-                      <option value="{{ __('messages.admin.orders.status_options.closed') }}" {{ old('status', $order->status ?? '') == __('messages.admin.orders.status_options.closed') ? 'selected' : '' }}>{{ __('messages.admin.orders.status_options.closed') }}</option>
+                      <option value="Emballé" {{ old('status', $order->status ?? '') == 'Emballé' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.packed') }}</option>
+                      <option value="Envoyé" {{ old('status', $order->status ?? '') == 'Envoyé' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.sent') }}</option>
+                      <option value="En route" {{ old('status', $order->status ?? '') == 'En route' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.on_way') }}</option>
+                      <option value="Recu" {{ old('status', $order->status ?? '') == 'Recu' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.received') }}</option>
+                      <option value="Retournée"
+                        {{ old('status', $order->status ?? '') == 'Retournée' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.returned') }}</option>
+                      <option value="fermée" {{ old('status', $order->status ?? '') == 'fermée' ? 'selected' : '' }}>
+                        {{ __('messages.admin.orders.status_options.closed') }}</option>
                     </select>
                   </div>
                 </form>
@@ -96,7 +103,8 @@
             {{ __('messages.admin.orders.pagination.of') }}
             <strong>{{ $paginator->total() }}</strong>
             {{ __('messages.admin.orders.pagination.orders') }}
-            ({{ __('messages.admin.orders.pagination.page') }} <strong>{{ $paginator->currentPage() }}</strong> {{ __('messages.admin.orders.pagination.of2') }} <strong>{{ $paginator->lastPage() }}</strong>)
+            ({{ __('messages.admin.orders.pagination.page') }} <strong>{{ $paginator->currentPage() }}</strong>
+            {{ __('messages.admin.orders.pagination.of2') }} <strong>{{ $paginator->lastPage() }}</strong>)
           </div>
         </div>
       @endif
