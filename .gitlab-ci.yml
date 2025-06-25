@@ -46,7 +46,30 @@ cache:
     
     # Set up Laravel environment
     - cp .env.example .env
-    - php artisan key:generate
+    - php artisan key:generate --ansi
+    
+    # Create testing environment file
+    - |
+      cat > .env.testing << EOF
+      APP_NAME=Laravel
+      APP_ENV=testing
+      APP_KEY=$(php artisan --no-ansi key:generate --show)
+      APP_DEBUG=true
+      APP_URL=http://localhost
+      
+      DB_CONNECTION=mysql
+      DB_HOST=${DB_HOST}
+      DB_PORT=3306
+      DB_DATABASE=${DB_DATABASE}
+      DB_USERNAME=${DB_USERNAME}
+      DB_PASSWORD=${DB_PASSWORD}
+      
+      CACHE_DRIVER=array
+      SESSION_DRIVER=array
+      QUEUE_CONNECTION=sync
+      MAIL_MAILER=array
+      EOF
+    
     - php artisan config:clear
     - php artisan cache:clear
 
@@ -69,17 +92,25 @@ unit_tests:
   dependencies:
     - prepare:dependencies
   script:
+    # Set up testing environment
+    - php artisan config:clear --env=testing
+    - php artisan cache:clear --env=testing
+    
     # Run Unit tests only
-    - vendor/bin/phpunit --testsuite=Unit --coverage-text --coverage-clover=coverage-unit.xml
+    - vendor/bin/phpunit --testsuite=Unit --log-junit=unit-test-results.xml --coverage-text --coverage-clover=unit-coverage.xml || true
+    
+    # Check if tests passed
+    - vendor/bin/phpunit --testsuite=Unit
   artifacts:
     when: always
     reports:
-      junit: coverage-unit.xml
+      junit: unit-test-results.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage-unit.xml
+        path: unit-coverage.xml
     paths:
-      - coverage-unit.xml
+      - unit-test-results.xml
+      - unit-coverage.xml
     expire_in: 1 week
 
 # Feature Tests - Tests that require database
@@ -94,20 +125,26 @@ feature_tests:
     # Wait for MySQL to be ready
     - until mysql -h mysql -u $DB_USERNAME -p$DB_PASSWORD -e "SELECT 1"; do sleep 1; done
     
-    # Set up test database
+    # Set up test database and environment
+    - php artisan config:clear --env=testing
+    - php artisan cache:clear --env=testing
     - php artisan migrate --force --env=testing
     
     # Run Feature tests
-    - vendor/bin/phpunit --testsuite=Feature --coverage-text --coverage-clover=coverage-feature.xml
+    - vendor/bin/phpunit --testsuite=Feature --log-junit=feature-test-results.xml --coverage-text --coverage-clover=feature-coverage.xml || true
+    
+    # Check if tests passed
+    - vendor/bin/phpunit --testsuite=Feature
   artifacts:
     when: always
     reports:
-      junit: coverage-feature.xml
+      junit: feature-test-results.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage-feature.xml
+        path: feature-coverage.xml
     paths:
-      - coverage-feature.xml
+      - feature-test-results.xml
+      - feature-coverage.xml
     expire_in: 1 week
 
 # All Tests - Run complete test suite (optional - for comprehensive coverage)
@@ -122,21 +159,27 @@ all_tests:
     # Wait for MySQL to be ready
     - until mysql -h mysql -u $DB_USERNAME -p$DB_PASSWORD -e "SELECT 1"; do sleep 1; done
     
-    # Set up test database
+    # Set up test database and environment
+    - php artisan config:clear --env=testing
+    - php artisan cache:clear --env=testing
     - php artisan migrate --force --env=testing
     
     # Run all tests with coverage
-    - vendor/bin/phpunit --coverage-html=coverage-html --coverage-text --coverage-clover=coverage-all.xml
+    - vendor/bin/phpunit --log-junit=all-test-results.xml --coverage-html=coverage-html --coverage-text --coverage-clover=all-coverage.xml || true
+    
+    # Check if tests passed
+    - vendor/bin/phpunit
   artifacts:
     when: always
     reports:
-      junit: coverage-all.xml
+      junit: all-test-results.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage-all.xml
+        path: all-coverage.xml
     paths:
       - coverage-html/
-      - coverage-all.xml
+      - all-test-results.xml
+      - all-coverage.xml
     expire_in: 1 week
   # This job is manual to avoid running redundant tests
   when: manual
