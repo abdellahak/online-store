@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
   <meta charset="utf-8" />
@@ -17,23 +17,23 @@
     <!-- sidebar -->
     <div class="p-3 col fixed text-white bg-dark">
       <a href="{{ route('admin.home.index') }}" class="text-white text-decoration-none">
-        <span class="fs-4">Admin Panel</span>
+        <span class="fs-4">{{__('messages.layouts.admin.logo')}}</span>
       </a>
       <hr />
       <ul class="nav flex-column">
-        <li><a href="{{ route('admin.home.index') }}" class="nav-link text-white">- Admin - Home</a></li>
-        <li><a href="{{ route('admin.dashboard.index') }}" class="nav-link text-white">- Admin - Dashboard</a></li>
-        <li><a href="{{ route('admin.product.index') }}" class="nav-link text-white">- Admin - Products</a></li>
-        <li><a href="{{ route('admin.category.index') }}" class="nav-link text-white">- Admin - Categories</a></li>
-        <li><a href="{{ route('admin.supplier.index') }}" class="nav-link text-white">- Admin - Supplier</a></li>
-        <li><a href="{{ route('admin.soldes.index') }}" class="nav-link text-white">- Admin - Soldes</a></li>
+        <li><a href="{{ route('admin.home.index') }}" class="nav-link text-white">{{__('messages.layouts.app.home')}}</a></li>
+        <li><a href="{{ route('admin.dashboard.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.dashboard')}}</a></li>
+        <li><a href="{{ route('admin.product.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.products')}}</a></li>
+        <li><a href="{{ route('admin.category.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.categories')}}</a></li>
+        <li><a href="{{ route('admin.supplier.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.suppliers')}}</a></li>
+        <li><a href="{{ route('admin.soldes.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.soldes')}}</a></li>
 
-        <li><a href="{{ route('admin.order.index') }}" class="nav-link text-white">- Admin - Orders</a></li>
+        <li><a href="{{ route('admin.order.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.orders')}}</a></li>
         @if (Auth::user() && Auth::user()->is_super_admin)
-          <li><a href="{{ route('admin.user.index') }}" class="nav-link text-white">- Admin - Users</a></li>
+          <li><a href="{{ route('admin.user.index') }}" class="nav-link text-white">{{__('messages.layouts.admin.users')}}</a></li>
         @endif
         <li>
-          <a href="{{ route('home.index') }}" class="mt-2 btn bg-primary text-white">Go back to the home page</a>
+          <a href="{{ route('home.index') }}" class="mt-2 btn bg-primary text-white">{{__('messages.layouts.admin.rutern_home')}}</a>
         </li>
       </ul>
     </div>
@@ -42,6 +42,14 @@
       <nav class="p-3 shadow text-end">
         <span class="profile-font">Admin</span>
         <img class="img-profile rounded-circle" src="{{ asset('/img/undraw_profile.svg') }}">
+        <form action="{{ route('locale.switch') }}" method="POST" class="d-inline ms-2">
+          @csrf
+          <select name="locale" onchange="this.form.submit()" class="form-select form-select-sm" style="width:auto;display:inline-block;">
+            <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>English</option>
+            <option value="fr" {{ app()->getLocale() == 'fr' ? 'selected' : '' }}>Français</option>
+            <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>العربية</option>
+          </select>
+        </form>
       </nav>
 
       <div class="g-0 m-5">

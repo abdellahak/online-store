@@ -3,7 +3,7 @@
 @section('content')
   <div class="card mb-4">
     <div class="card-header">
-      Create Products
+      {{ __('messages.admin.product.index.create_title') }}
     </div>
     <div class="card-body">
       @if ($errors->any())
@@ -19,7 +19,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Name:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.name') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="name" value="{{ old('name') }}" type="text" class="form-control">
               </div>
@@ -28,7 +28,7 @@
 
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Price:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.price') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="price" value="{{ old('price') }}" type="number" class="form-control">
               </div>
@@ -39,7 +39,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Image:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.image') }}</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input class="form-control" type="file" name="image">
               </div>
@@ -48,7 +48,7 @@
           <div class="col">
             <div class="col">
               <div class="mb-3 row">
-                <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Quantity:</label>
+                <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.quantity') }}</label>
                 <div class="col-lg-10 col-md-6 col-sm-12">
                   <input name="quantity_store" value="{{ old('quantity_store') }}" type="number" class="form-control">
                 </div>
@@ -60,9 +60,9 @@
 
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Category Name</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.category') }}</label>
               <select name="category_id" id="" class="form-control">
-                <option value="" disabled selected>Select Category</option>
+                <option value="" disabled selected>{{ __('messages.admin.product.index.form.category') }}</option>
                 @foreach ($viewData['categories'] as $category)
                   <option value="{{ $category->id }}">{{ $category->name }}</option>
                 @endforeach
@@ -72,9 +72,9 @@
         </div>
         <div class="col">
           <div class="mb-3 row">
-            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Supplier Name</label>
+            <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{ __('messages.admin.product.index.form.supplier') }}</label>
             <select name="supplier_id" id="" class="form-control">
-              <option value="" disabled selected>Select Supplier</option>
+              <option value="" disabled selected>{{ __('messages.admin.product.index.form.supplier') }}</option>
               @foreach ($viewData['suppliers'] as $supplier)
                 <option value="{{ $supplier->id }}">{{ $supplier->raison_sociale }}</option>
               @endforeach
@@ -82,29 +82,21 @@
           </div>
         </div>
         <div class="mb-3">
-          <label class="form-label">Description</label>
+          <label class="form-label">{{ __('messages.admin.product.index.form.description') }}</label>
           <textarea class="form-control" name="description" rows="3">{{ old('description') }}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">{{ __('messages.admin.product.index.form.btn_submit') }}</button>
       </form>
     </div>
   </div>
 
   <div class="d-flex align-items-center gap-2">
-    <form action="{{ route('admin.product.export') }}" method="GET" class="mb-2 d-flex gap-2 align-items-center"
-      style="flex-wrap: wrap;">
-      <button type="submit" class="btn btn-primary" name="all" value="1">Export All</button>
-      <button type="submit" class="btn btn-outline-primary" name="page"
-        value="{{ request()->query('page', 1) }}">Export Page</button>
-    </form>
-
+    <a href="{{ route('admin.product.export') }}" class="btn btn-success mb-2">{{ __('messages.admin.product.index.export_csv') }}</a>
     <form action="{{ route('admin.product.import') }}" method="POST" enctype="multipart/form-data"
       style="display:inline;">
       @csrf
-      <button type="submit" class="btn btn-primary mb-2">Importer CSV</button>
-      <input type="file" class="mb-2" name="csv_file"
-        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-        required>
+      <button type="submit" class="btn btn-primary mb-2">{{ __('messages.admin.product.index.import_csv') }}</button>
+      <input type="file" class="mb-2" name="csv_file" accept=".csv" required>
     </form>
 
     <a href="{{ route('admin.product.example') }}" class="btn btn-secondary mb-2">Download Example Excel</a>
@@ -112,14 +104,14 @@
 
   <div class="card">
     <div class="card-header">
-      Manage Products
+      {{ __('messages.admin.product.index.manage_title') }}
     </div>
     <div class="card-body">
       <form method="GET" action="{{ route('admin.product.filterparcategory') }}">
         <div class="mb-3">
-          <label class="form-label">Filter by Category:</label>
+          <label class="form-label">{{ __('messages.admin.product.index.filter_category') }}</label>
           <select name="category_id" class="form-control" onchange="this.form.submit()">
-            <option value="">All Categories</option>
+            <option value="">{{ __('messages.admin.product.index.all_categories') }}</option>
             @foreach ($viewData['categories'] as $category)
               <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
                 {{ $category->name }}
@@ -130,9 +122,9 @@
       </form>
       <form method="GET" action="{{ route('admin.product.filterparsupplier') }}">
         <div class="mb-3">
-          <label class="form-label">Filter by Supplier:</label>
+          <label class="form-label">{{ __('messages.admin.product.index.filter_supplier') }}</label>
           <select name="supplier_id" class="form-control" onchange="this.form.submit()">
-            <option value="">All Supplier</option>
+            <option value="">{{ __('messages.admin.product.index.all_suppliers') }}</option>
             @foreach ($viewData['suppliers'] as $supplier)
               <option value="{{ $supplier->id }}" {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>
                 {{ $supplier->raison_sociale }}
@@ -144,15 +136,15 @@
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Supplier Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Discounted Price</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.id') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.name') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.category') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.supplier') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.price') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.discounted_price') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.quantity') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.edit') }}</th>
+            <th scope="col">{{ __('messages.admin.product.index.table.delete') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -229,14 +221,14 @@
             </ul>
           </nav>
           <div class="mb-2 text-muted small">
-            Showing
+            {{ __('messages.admin.product.index.pagination_showing') }}
             <strong>{{ $paginator->firstItem() ?? 0 }}</strong>
-            to
+            {{ __('messages.admin.product.index.pagination_to') }}
             <strong>{{ $paginator->lastItem() ?? 0 }}</strong>
-            of
+            {{ __('messages.admin.product.index.pagination_of') }}
             <strong>{{ $paginator->total() }}</strong>
-            products
-            (Page <strong>{{ $paginator->currentPage() }}</strong> of <strong>{{ $paginator->lastPage() }}</strong>)
+            {{ __('messages.admin.product.index.pagination_products') }}
+            ({{ __('messages.admin.product.index.pagination_page') }} <strong>{{ $paginator->currentPage() }}</strong> {{ __('messages.admin.product.index.pagination_of2') }} <strong>{{ $paginator->lastPage() }}</strong>)
           </div>
         </div>
       @endif

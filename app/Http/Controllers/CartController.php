@@ -24,7 +24,7 @@ class CartController extends Controller
 
         $viewData = [];
         $viewData["title"] = "Cart - Online Store";
-        $viewData["subtitle"] =  "Shopping Cart";
+        $viewData["subtitle"] =  __('messages.cart.shared.title');
         $viewData["total"] = $total;
         $viewData["user"] = $user;
         $viewData["products"] = $productsInCart;

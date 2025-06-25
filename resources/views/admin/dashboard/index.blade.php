@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Admin Dashboard')
+@section('title', __('messages.admin.home.index.title'))
 @section('content')
   <div class="container-fluid">
     @if (session('error'))
@@ -9,18 +9,18 @@
       </div>
     @endif
     <div class="d-flex justify-content-between align-items-center">
-      <h2 class="mb-4 fw-bold text-primary">Dashboard</h2>
+      <h2 class="mb-4 fw-bold text-primary">{{ __('messages.admin.home.index.welcome.title') }}</h2>
       <a href="{{ route('admin.dashboard.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-clockwise"></i>
-        Refresh</a>
+        {{ __('messages.dashboard.reset') }}</a>
     </div>
 
     {{-- Quick Links --}}
     <div class="card mb-4">
       <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Quick Links</h5>
+          <h5 class="mb-0">{{ __('messages.dashboard.quick_links') }}</h5>
         </div>
-        <p class="text-muted mb-0">Quick access to important sections of the admin panel.</p>
+        <p class="text-muted mb-0">{{ __('messages.dashboard.overview_desc') }}</p>
       </div>
       <div class="card-body">
         <div class="row g-4 mb-5">
@@ -29,7 +29,7 @@
               <div class="card custom-link-card bg-dark shadow h-100">
                 <div class="card-body d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 class="card-title mb-2">Customers</h6>
+                    <h6 class="card-title mb-2">{{ __('messages.admin.users.manage_title') }}</h6>
                     <div class="link-value count-up" data-target="{{ $customerCount }}">{{ $customerCount }}</div>
                   </div>
                   <i class="bi bi-people-fill link-icon"></i>
@@ -42,7 +42,7 @@
               <div class="card custom-link-card bg-secondary shadow h-100">
                 <div class="card-body d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 class="card-title mb-2">Products</h6>
+                    <h6 class="card-title mb-2">{{ __('messages.admin.product.index.manage_title') }}</h6>
                     <div class="link-value count-up" data-target="{{ $productCount }}">{{ $productCount }}</div>
                   </div>
                   <i class="bi bi-boxes link-icon"></i>
@@ -55,7 +55,7 @@
               <div class="card custom-link-card bg-primary shadow h-100">
                 <div class="card-body d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 class="card-title mb-2">Categories</h6>
+                    <h6 class="card-title mb-2">{{ __('messages.admin.categories.index.title') }}</h6>
                     <div class="link-value count-up" data-target="{{ $categoryCount }}">{{ $categoryCount }}</div>
                   </div>
                   <i class="bi bi-tags-fill link-icon"></i>
@@ -68,7 +68,7 @@
               <div class="card custom-link-card bg-success shadow h-100">
                 <div class="card-body d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 class="card-title mb-2">Discounts</h6>
+                    <h6 class="card-title mb-2">{{ __('messages.admin.soldes.index.manage_title') }}</h6>
                     <div class="link-value count-up" data-target="{{ $discountCount }}">{{ $discountCount }}</div>
                   </div>
                   <i class="bi bi-percent link-icon"></i>
@@ -85,29 +85,29 @@
       <div class="card mb-4">
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Dashboard Overview</h5>
+            <h5 class="mb-0">{{ __('messages.dashboard.overview') }}</h5>
           </div>
-          <p class="text-muted mb-0">View key performance indicators and charts for the selected period.</p>
+          <p class="text-muted mb-0">{{ __('messages.dashboard.overview_desc') }}</p>
         </div>
         <div class="card-body">
           {{-- Period Filter Form --}}
           <form method="GET" class="row g-3 align-items-end mb-4 d-print-none" id="dashboard-period-form">
             <div class="col-md-3">
-              <label for="start_date" class="form-label fw-semibold">Start Date</label>
+              <label for="start_date" class="form-label fw-semibold">{{ __('messages.dashboard.start_date') }}</label>
               <input type="date" id="start_date" name="start_date" class="form-control" value="{{ $start }}">
             </div>
             <div class="col-md-3">
-              <label for="end_date" class="form-label fw-semibold">End Date</label>
+              <label for="end_date" class="form-label fw-semibold">{{ __('messages.dashboard.end_date') }}</label>
               <input type="date" id="end_date" name="end_date" class="form-control" value="{{ $end }}">
             </div>
             <div class="col-md-6 d-flex align-items-end">
-              <button type="submit" class="btn btn-lg btn-primary me-2"><i class="bi bi-search"></i> Filter</button>
+              <button type="submit" class="btn btn-lg btn-primary me-2"><i class="bi bi-search"></i> {{ __('messages.dashboard.filter') }}</button>
               @if (request('start_date') || request('end_date'))
                 <a href="{{ route('admin.dashboard.index') }}" class="btn btn-lg btn-secondary me-2"><i
-                    class="bi bi-arrow-counterclockwise"></i> Reset</a>
+                    class="bi bi-arrow-counterclockwise"></i> {{ __('messages.dashboard.reset') }}</a>
               @endif
               <button type="button" id="downloadPdfBtn" class="btn btn-lg btn-danger"><i
-                  class="bi bi-file-earmark-pdf"></i> Download PDF</button>
+                  class="bi bi-file-earmark-pdf"></i> {{ __('messages.dashboard.download_pdf') }}</button>
             </div>
           </form>
           {{-- Everything below will be included in the PDF --}}
@@ -118,7 +118,7 @@
                 <div class="card kpi-card text-white bg-primary shadow h-100">
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                      <h6 class="card-title mb-2">Period Revenue</h6>
+                      <h6 class="card-title mb-2">{{ __('messages.dashboard.period_revenue') }}</h6>
                       <div class="kpi-value count-up" data-target="{{ $revenueByPeriod }}">
                         ${{ number_format($revenueByPeriod, 2) }}</div>
                     </div>
@@ -130,7 +130,7 @@
                 <div class="card kpi-card text-white bg-success shadow h-100">
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                      <h6 class="card-title mb-2">Orders</h6>
+                      <h6 class="card-title mb-2">{{ __('messages.dashboard.orders') }}</h6>
                       <div class="kpi-value count-up" data-target="{{ $orderCount }}">{{ $orderCount }}</div>
                     </div>
                     <i class="bi bi-receipt kpi-icon"></i>
@@ -141,7 +141,7 @@
                 <div class="card kpi-card text-white bg-info shadow h-100">
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                      <h6 class="card-title mb-2">Products Sold</h6>
+                      <h6 class="card-title mb-2">{{ __('messages.dashboard.products_sold') }}</h6>
                       <div class="kpi-value count-up" data-target="{{ $productsSold }}">{{ $productsSold }}</div>
                     </div>
                     <i class="bi bi-box-seam kpi-icon"></i>
@@ -152,7 +152,7 @@
                 <div class="card kpi-card text-white bg-warning shadow h-100">
                   <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                      <h6 class="card-title mb-2">Avg Order Amount</h6>
+                      <h6 class="card-title mb-2">{{ __('messages.dashboard.avg_order_amount') }}</h6>
                       <div class="kpi-value count-up" data-target="{{ $avgOrderAmount }}">
                         ${{ number_format($avgOrderAmount, 2) }}</div>
                     </div>
@@ -166,7 +166,7 @@
             <div class="row g-4 mb-4">
               <div class="col-lg-6">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-success text-white fw-semibold">Revenue by Month (Chart)</div>
+                  <div class="card-header bg-success text-white fw-semibold">{{ __('messages.dashboard.revenue_by_month_chart') }}</div>
                   <div class="card-body">
                     <canvas id="revenueByMonthChart" height="120"></canvas>
                   </div>
@@ -174,7 +174,7 @@
               </div>
               <div class="col-lg-6">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-primary text-white fw-semibold">Revenue by Day (Chart)</div>
+                  <div class="card-header bg-primary text-white fw-semibold">{{ __('messages.dashboard.revenue_by_day_chart') }}</div>
                   <div class="card-body">
                     <canvas id="revenueByDayChart" height="120"></canvas>
                   </div>
@@ -184,7 +184,7 @@
             <div class="row g-4 mb-4">
               <div class="col-lg-6">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue (Chart)</div>
+                  <div class="card-header bg-info text-white fw-semibold">{{ __('messages.dashboard.top_products_chart') }}</div>
                   <div class="card-body">
                     <canvas id="topProductsChart" height="200"></canvas>
                   </div>
@@ -192,7 +192,7 @@
               </div>
               <div class="col-lg-6">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-warning text-white fw-semibold">Revenue by Category (Chart)</div>
+                  <div class="card-header bg-warning text-white fw-semibold">{{ __('messages.dashboard.revenue_by_category_chart') }}</div>
                   <div class="card-body">
                     <canvas id="revenueByCategoryChart" height="120"></canvas>
                   </div>
@@ -204,15 +204,15 @@
             <div class="row g-4 tableDataContainer">
               <div class="col-lg-6 tableData">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-primary text-white fw-semibold">Revenue by Day</div>
+                  <div class="card-header bg-primary text-white fw-semibold">{{ __('messages.dashboard.revenue_by_day') }}</div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-sm table-striped mb-0 align-middle">
                         <thead class="table-light">
                           <tr>
-                            <th>Date</th>
-                            <th>Revenue</th>
-                            <th>Products Sold</th>
+                            <th>{{ __('messages.dashboard.date') }}</th>
+                            <th>{{ __('messages.dashboard.revenue') }}</th>
+                            <th>{{ __('messages.dashboard.products_sold_col') }}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -231,17 +231,15 @@
               </div>
               <div class="col-lg-6 tableData">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-success text-white fw-semibold">Revenue by Month (for the selected period
-                    only)
-                  </div>
+                  <div class="card-header bg-success text-white fw-semibold">{{ __('messages.dashboard.revenue_by_month') }}</div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-sm table-striped mb-0 align-middle">
                         <thead class="table-light">
                           <tr>
-                            <th>Month</th>
-                            <th>Revenue</th>
-                            <th>Products Sold</th>
+                            <th>{{ __('messages.dashboard.month') }}</th>
+                            <th>{{ __('messages.dashboard.revenue') }}</th>
+                            <th>{{ __('messages.dashboard.products_sold_col') }}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -260,15 +258,15 @@
               </div>
               <div class="col-lg-6 tableData">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-info text-white fw-semibold">Top Products by Revenue</div>
+                  <div class="card-header bg-info text-white fw-semibold">{{ __('messages.dashboard.top_products') }}</div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-sm table-striped mb-0 align-middle">
                         <thead class="table-light">
                           <tr>
-                            <th>Product</th>
-                            <th>Revenue</th>
-                            <th>Products Sold</th>
+                            <th>{{ __('messages.dashboard.product') }}</th>
+                            <th>{{ __('messages.dashboard.revenue') }}</th>
+                            <th>{{ __('messages.dashboard.products_sold_col') }}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -287,15 +285,15 @@
               </div>
               <div class="col-lg-6 tableData">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-warning text-white fw-semibold">Revenue by Category</div>
+                  <div class="card-header bg-warning text-white fw-semibold">{{ __('messages.dashboard.revenue_by_category') }}</div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-sm table-striped mb-0 align-middle">
                         <thead class="table-light">
                           <tr>
-                            <th>Category</th>
-                            <th>Revenue</th>
-                            <th>Products Sold</th>
+                            <th>{{ __('messages.dashboard.category') }}</th>
+                            <th>{{ __('messages.dashboard.revenue') }}</th>
+                            <th>{{ __('messages.dashboard.products_sold_col') }}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -314,16 +312,14 @@
               </div>
               <div class="col-lg-12 tableData">
                 <div class="card shadow h-100">
-                  <div class="card-header bg-secondary text-white fw-semibold">Revenue by Year (for the selected period
-                    only)
-                  </div>
+                  <div class="card-header bg-secondary text-white fw-semibold">{{ __('messages.dashboard.revenue_by_year') }}</div>
                   <div class="table-responsive">
                     <table class="table table-sm table-striped mb-0 align-middle">
                       <thead class="table-light">
                         <tr>
-                          <th>Year</th>
-                          <th>Revenue</th>
-                          <th>Products Sold</th>
+                          <th>{{ __('messages.dashboard.year') }}</th>
+                          <th>{{ __('messages.dashboard.revenue') }}</th>
+                          <th>{{ __('messages.dashboard.products_sold_col') }}</th>
                         </tr>
                       </thead>
                       <tbody>

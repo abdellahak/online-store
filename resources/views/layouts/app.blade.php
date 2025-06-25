@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,23 +17,31 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link active" href="{{ route('home.index') }}">Home</a>
-          <a class="nav-link active" href="{{ route('product.index') }}">Products</a>
-          <a class="nav-link active" href="{{ route('cart.index') }}">Cart</a>
-          <a class="nav-link active" href="{{ route('home.about') }}">About</a>
+        <div class="navbar-nav ms-auto align-items-center d-flex">
+          <a class="nav-link active" href="{{ route('home.index') }}">{{ __('messages.layouts.app.home') }}</a>
+          <a class="nav-link active" href="{{ route('product.index') }}">{{ __('messages.layouts.app.products') }}</a>
+          <a class="nav-link active" href="{{ route('cart.index') }}">{{ __('messages.layouts.app.cart') }}</a>
+          <a class="nav-link active" href="{{ route('home.about') }}">{{ __('messages.layouts.app.about') }}</a>
           <div class="vr bg-white mx-2 d-none d-lg-block"></div>
           @guest
-          <a class="nav-link active" href="{{ route('login') }}">Login</a>
-          <a class="nav-link active" href="{{ route('register') }}">Register</a>
+          <a class="nav-link active" href="{{ route('login') }}">{{ __('messages.layouts.app.login') }}</a>
+          <a class="nav-link active" href="{{ route('register') }}">{{ __('messages.layouts.app.register') }}</a>
           @else
-          <a class="nav-link active" href="{{ route('myaccount.orders') }}">My Orders</a>
-          <form id="logout" action="{{ route('logout') }}" method="POST">
-            <a role="button" class="nav-link active"
-               onclick="document.getElementById('logout').submit();">Logout</a>
-            @csrf
+          <a class="nav-link active" href="{{ route('myaccount.orders') }}">{{ __('messages.layouts.app.my_orders') }}</a>
+          <form id="logout" action="{{ route('logout') }}" method="POST" class="d-inline">
+        <a role="button" class="nav-link active"
+           onclick="document.getElementById('logout').submit();">{{ __('messages.layouts.shared.Logout') }}</a>
+        @csrf
           </form>
           @endguest
+          <form action="{{ route('locale.switch') }}" method="POST" class="d-inline ms-2">
+        @csrf
+        <select name="locale" onchange="this.form.submit()" class="form-select form-select-sm" style="width:auto;display:inline-block;">
+            <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>English</option>
+            <option value="fr" {{ app()->getLocale() == 'fr' ? 'selected' : '' }}>Français</option>
+            <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>العربية</option>
+        </select>
+          </form>
         </div>
       </div>
     </div>
@@ -41,7 +49,7 @@
 
   <header class="masthead bg-primary text-white text-center py-4">
     <div class="container d-flex align-items-center flex-column">
-      <h2>@yield('subtitle', 'A Laravel Online Store')</h2>
+      <h2>@yield('subtitle', __('messages.home.index.title'))</h2>
     </div>
   </header>
   <!-- header -->

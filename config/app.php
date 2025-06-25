@@ -82,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'en', // ou 'fr' ou 'ar' selon la langue par défaut
 
     /*
     |--------------------------------------------------------------------------
@@ -96,6 +96,18 @@ return [
     */
 
     'fallback_locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supported Locales
+    |--------------------------------------------------------------------------
+    |
+    | This array lists the locales supported by the application. You can
+    | add or remove locales as needed for your application.
+    |
+    */
+
+    'supported_locales' => ['en', 'fr', 'ar'],
 
     /*
     |--------------------------------------------------------------------------

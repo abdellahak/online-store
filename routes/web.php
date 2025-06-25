@@ -75,4 +75,12 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/users/{id}/delete', [AdminUserController::class, 'destroy'])->name('user.delete');
 });
 
+Route::post('/locale', function () {
+    $locale = request('locale');
+    if (in_array($locale, ['en', 'fr', 'ar'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('locale.switch');
+
 Auth::routes();

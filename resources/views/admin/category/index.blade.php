@@ -3,7 +3,7 @@
 @section('content')
   <div class="card mb-4">
     <div class="card-header">
-      Create category
+       {{__('messages.admin.categories.index.create')}}
     </div>
     <div class="card-body">
       @if ($errors->any())
@@ -19,7 +19,7 @@
         <div class="row">
           <div class="col">
             <div class="mb-3 row">
-              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">Name:</label>
+              <label class="col-lg-2 col-md-6 col-sm-12 col-form-label">{{__('messages.admin.categories.index.table.headers.name')}}:</label>
               <div class="col-lg-10 col-md-6 col-sm-12">
                 <input name="name" value="{{ old('name') }}" type="text" class="form-control">
               </div>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Description</label>
+          <label class="form-label">{{__('messages.admin.categories.index.table.headers.description')}}</label>
           <textarea class="form-control" name="description" rows="3">{{ old('description') }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -39,17 +39,17 @@
 
   <div class="card">
     <div class="card-header">
-      Manage Categories
+      {{__('messages.admin.categories.index.table.title')}}
     </div>
     <div class="card-body">
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">{{__('messages.admin.categories.index.table.headers.name')}}</th>
+            <th scope="col">{{__('messages.admin.categories.index.table.headers.description')}}</th>
+            <th scope="col">{{__('messages.admin.categories.create.form.btn.edit')}}</th>
+            <th scope="col">{{__('messages.admin.categories.create.form.btn.delete')}}</th>
           </tr>
         </thead>
         <tbody>

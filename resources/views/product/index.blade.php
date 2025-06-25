@@ -12,7 +12,7 @@
           <input type="checkbox" name="show_sales" id="showSales" {{ old('show_sales') ? 'checked' : '' }}
             class="form-check-input" role="switch" {{ request('show_sales') ? 'checked' : '' }}
             onchange="this.form.submit()" style="cursor: pointer;">
-          <label class="form-check-label" for="showSales" style="cursor: pointer;">Show Only Sales</label>
+          <label class="form-check-label" for="showSales" style="cursor: pointer;">{{ __('messages.products.shared.sales') }}</label>
         </div>
       </form>
 
