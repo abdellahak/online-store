@@ -18,8 +18,8 @@ build:
   image: php:8.2-cli
   stage: build
   before_script:
-    # Install system dependencies
-    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3
+    # Install system dependencies including SQLite development packages
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3 libsqlite3-dev
     
     # Install PHP extensions
     - docker-php-ext-install pdo_sqlite zip bcmath gd
@@ -78,8 +78,8 @@ test:
   dependencies:
     - build
   before_script:
-    # Install system dependencies
-    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3
+    # Install system dependencies including SQLite development packages
+    - apt-get update -qq && apt-get install -y -qq git curl libmcrypt-dev libjpeg-dev libpng-dev libfreetype6-dev libbz2-dev libzip-dev unzip sqlite3 libsqlite3-dev
     
     # Install PHP extensions
     - docker-php-ext-install pdo_sqlite zip bcmath gd
